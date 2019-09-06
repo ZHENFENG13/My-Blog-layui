@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>评论列表-blog</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-col-md2 layui-show-xs-block">
+                            <select class="layui-select" name="blogId" xm-select="blogId"
+                                    xm-select-radio="">
+                                <option value="">选择博客</option>
+                            </select></div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="search_btn">
+                                <i class="layui-icon">&#xe615;</i></button>
+                        </div>
+                        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+                           onclick="location.reload()" title="刷新">
+                            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+                    </form>
+                </div>
+                <div class="layui-card-body ">
+                    <table id="blogCommentList" lay-filter="blogCommentList"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="isDeletedTool">
+    {{#  if(d.isDeleted == 1){ }}
+    <input type="checkbox" name="isDeleted" lay-skin="switch" value="{{d.commentId}}"
+           lay-text="已删除|未删除" lay-filter="isDeleted" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="isDeleted" lay-skin="switch" value="{{d.commentId}}"
+           lay-text="已删除|未删除" lay-filter="isDeleted">
+    {{#  } }}
+</script>
+<script type="text/html" id="isStatusTool">
+    {{#  if(d.commentStatus == 1){ }}
+    <input type="checkbox" name="commentStatus" lay-skin="switch" value="{{d.commentId}}"
+           lay-text="已审核|未审核" lay-filter="commentStatus" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="commentStatus" lay-skin="switch" value="{{d.commentId}}"
+           lay-text="已审核|未审核" lay-filter="commentStatus">
+    {{#  } }}
+</script>
+<script type="text/html" id="blogListBar">
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="clear">清除</a>
+</script>
+<script type="text/javascript" th:inline="none">
+    layui.use(['form', 'layer', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var formSelects = layui.formSelects;
+
+        formSelects.config("blogId", {
+            type: 'get',
+            keyName: 'blogTitle',
+            keyVal: 'blogId',
+            response: {
+                statusCode: 200,
+                statusName: 'resultCode',
+                msgName: 'message',
+                dataName: 'data'
+            }
+        });
+
+        formSelects.data('blogId', 'server', {
+            url: '/admin/v1/blog/select'
+        });
+
+        var tableIns = table.render({
+            elem: '#blogCommentList',
+            id: "blogCommentTable",
+            url: '/admin/v1/comment/paging',
+            title: '评论列表',
+            page: true,
+            height: "full-110",
+            toolbar: true,
+            limits: [10],
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'commentator', title: '评论者名称', align: "center", unresize: "true"},
+                {field: 'email', title: '评论者邮箱', align: 'center', unresize: "true"},
+                {field: 'commentBody', title: '评论内容', align: 'center', unresize: "true"},
+                {field: 'commentCreateTime', title: '评论提交时间', align: 'center', unresize: "true"},
+                {field: 'replyBody', title: '回复内容', align: 'center', unresize: "true",edit:"text"},
+                {field: 'replyCreateTime', title: '回复时间', align: 'center', unresize: "true"},
+                {field: 'commentStatus', title: '审核', align: 'center', unresize: "true",templet: '#isStatusTool'},
+                {field: 'isDeleted', title: '当前状态', align: 'center', unresize: "true",templet: '#isDeletedTool'},
+                {title: '操作', align: "center", unresize: "true", toolbar: "#blogListBar"}
+            ]]
+        });
+
+        //搜索
+        form.on('submit(search_btn)', function (data) {
+            var datas = data.field;
+            for (var property in datas){
+                if (datas[property] === ""){
+                    delete datas[property];
+                }
+            }
+            tableIns.reload({
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        table.on('edit(blogCommentList)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            delete data['commentCreateTime'];
+            delete data['replyCreateTime'];
+            $.post("/admin/v1/comment/edit",data, function (s) {
+                layer.msg(s.message);
+                tableIns.reload();
+            });
+        });
+
+        form.on('switch(isDeleted)', function (data) {
+            var isDeleted = data.elem.checked ? 1 : 0; //1为已删除,0为未删除
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post("/admin/v1/comment/isDel",
+                {
+                    "commentId": data.value,
+                    "isDeleted": isDeleted
+                }, function (s) {
+                    setTimeout(function () {
+                        top.layer.close(index);
+                        form.render('select', 'isDeleted');
+                        top.layer.msg(s.message);
+                    }, 500);
+                });
+        });
+
+        form.on('switch(commentStatus)', function (data) {
+            var commentStatus = data.elem.checked ? 1 : 0; //1为已审核,0为未审核
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post("/admin/v1/comment/commentStatus",
+                {
+                    "commentId": data.value,
+                    "commentStatus": commentStatus
+                }, function (s) {
+                    setTimeout(function () {
+                        top.layer.close(index);
+                        form.render('select', 'commentStatus');
+                        top.layer.msg(s.message);
+                    }, 500);
+                });
+        });
+
+        //监听工具条
+        table.on('tool(blogLinkList)', function(obj){
+            var data = obj.data, //获得当前行数据
+                layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            switch (layEvent) {
+                case 'clear':
+                    layer.confirm('确定清除？',{icon:3, title:'提示信息'},function(index){
+                        $.post("/admin/v1/link/clear",
+                            {
+                                "linkId": data.linkId
+                            }, function (s) {
+                                layer.msg(s.message);
+                            });
+                        layer.close(index);
+                        tableIns.reload();
+                    });
+                    break;
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>链接编辑-blog</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row">
+        <div class="layui-form">
+            <div class="layui-form-item">
+                <input th:if="${blogLink!=null}" type="hidden" name="linkId" th:value="${blogLink?.linkId}">
+                <label class="layui-form-label">
+                    <span class="x-red">*</span>链接分类</label>
+                <div class="layui-input-inline">
+                    <select class="layui-select" name="linkType" xm-select="linkType"
+                            xm-select-radio="" lay-verify="required">
+                        <option value="">请选择链接分类</option>
+                    </select></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_linkName" class="layui-form-label">
+                    <span class="x-red">*</span>链接名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_linkName" name="linkName" lay-verify="required"
+                           autocomplete="off" class="layui-input" th:value="${blogLink?.linkName}"></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_linkUrl" class="layui-form-label">
+                    <span class="x-red">*</span>链接url</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_linkUrl" name="linkUrl" lay-verify="required"
+                           autocomplete="off" class="layui-input" th:value="${blogLink?.linkUrl}"></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_linkDescription" class="layui-form-label">
+                    <span class="x-red">*</span>链接描述</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_linkDescription" name="linkDescription" lay-verify="required"
+                           autocomplete="off" class="layui-input" th:value="${blogLink?.linkDescription}"></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_linkRank" class="layui-form-label">
+                    <span class="x-red">*</span>链接Rank</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_linkRank" name="linkRank" lay-verify="required"
+                           autocomplete="off" class="layui-input" th:value="${blogLink?.linkRank}"></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="submit" lay-submit="">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+
+        var formSelects = layui.formSelects;
+
+        formSelects.config("linkType", {
+            type: 'get',
+            keyName: 'linkName',
+            keyVal: 'linkType',
+            response: {
+                statusCode: 200,
+                statusName: 'resultCode',
+                msgName: 'message',
+                dataName: 'data'
+            }
+        });
+
+        var LinkTypes = new Array();
+        LinkTypes[0] = [[${blogLink?.linkType}]] + "";
+        formSelects.data('linkType', 'server', {
+            url: '/admin/v1/linkType/list',
+            success: function(id, url, searchVal, result){
+                formSelects.value('linkType',LinkTypes,true);
+            }
+        });
+
+        //监听提交
+        form.on('submit(submit)', function (data) {
+            console.log(data.field);
+            $.ajax({
+                url: "/admin/v1/link/edit",
+                type: "post",
+                data: data.field,
+                success: function (s) {
+                    if (s.resultCode == 200) {
+                        layer.msg(s.message, function () {
+                                parent.location.reload();
+                            });
+                    } else {
+                        layer.msg(s.message, function () {
+                        });
+                    }
+                },
+                error: function () {
+                    layer.msg("接口异常!", function () {
+                    });
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+
+</html>

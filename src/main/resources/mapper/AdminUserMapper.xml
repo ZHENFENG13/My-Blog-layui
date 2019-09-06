@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.site.blog.dao.AdminUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.site.blog.entity.AdminUser">
+        <id column="admin_user_id" property="adminUserId" />
+        <result column="login_user_name" property="loginUserName" />
+        <result column="login_password" property="loginPassword" />
+        <result column="nick_name" property="nickName" />
+        <result column="locked" property="locked" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        admin_user_id, login_user_name, login_password, nick_name, locked
+    </sql>
+
+</mapper>

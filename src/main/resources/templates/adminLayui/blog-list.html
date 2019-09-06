@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>文章列表-blog</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5">
+                        <div class="layui-col-md2 layui-show-xs-block">
+                            <select class="layui-select" name="blogCategoryId" xm-select="blogCategoryId"
+                                    xm-select-radio="">
+                                <option value="">请选择文章分类</option>
+                            </select></div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="blogTitle" placeholder="请输入博客标题" autocomplete="off"
+                                   class="layui-input"></div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" lay-submit="" lay-filter="search_btn">
+                                <i class="layui-icon">&#xe615;</i></button>
+                        </div>
+                        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+                           onclick="location.reload()" title="刷新">
+                            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+                    </form>
+                </div>
+                <div class="layui-card-body ">
+                    <table id="blogList" lay-filter="blogList"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="blogStatusTool">
+    {{#  if(d.blogStatus == 1){ }}
+    <input type="checkbox" name="blogStatus" lay-skin="switch" value="{{d.blogId}}"
+           lay-text="发布|草稿" lay-filter="blogStatus" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="blogStatus" lay-skin="switch" value="{{d.blogId}}"
+           lay-text="发布|草稿" lay-filter="blogStatus">
+    {{#  } }}
+</script>
+<script type="text/html" id="enableCommentTool">
+    {{#  if(d.enableComment == 1){ }}
+    <input type="checkbox" name="enableComment" lay-filter="enableComment"
+           lay-skin="switch" value="{{d.blogId}}" lay-text="不允许评论|允许评论" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="enableComment" lay-filter="enableComment"
+           lay-skin="switch" value="{{d.blogId}}" lay-text="不允许评论|允许评论">
+    {{#  } }}
+</script>
+<script type="text/html" id="blogListBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    {{#  if(d.isDeleted == 1){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="restore">还原</a>
+    {{#  } else { }}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    {{#  } }}
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="clear">清除</a>
+</script>
+<script type="text/javascript" th:inline="none">
+    layui.use(['form', 'layer', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+        var formSelects = layui.formSelects;
+
+        formSelects.config("blogCategoryId", {
+            type: 'get',
+            keyName: 'categoryName',
+            keyVal: 'categoryId',
+            response: {
+                statusCode: 200,
+                statusName: 'resultCode',
+                msgName: 'message',
+                dataName: 'data'
+            }
+        });
+
+        formSelects.data('blogCategoryId', 'server', {
+            url: '/admin/v1/category/list'
+        });
+
+        var tableIns = table.render({
+            elem: '#blogList',
+            id: "blogListTable",
+            url: '/admin/v1/blog/list',
+            title: '博客列表',
+            page: true,
+            height: "full-110",
+            toolbar: true,
+            limits: [10],
+            cols: [[
+                {type: 'checkbox', field: 'blogId', fixed: "left"},
+                {field: 'blogTitle', title: '博客标题', align: "center", unresize: "true"},
+                {field: 'blogCategoryName', title: '博客分类', align: 'center', unresize: "true"},
+                {field: 'blogTags', title: '博客标签', align: 'center', unresize: "true"},
+                {field: 'blogViews', title: '阅读量', align: 'center', unresize: "true"},
+                {field: 'updateTime', title: '最后修改时间', align: 'center', unresize: "true"},
+                {
+                    field: 'blogStatus', title: '文章状态', align: 'center', unresize: "true", templet: '#blogStatusTool'
+                },
+                {
+                    field: 'enableComment',
+                    title: '评论',
+                    align: 'center',
+                    unresize: "true",
+                    templet: '#enableCommentTool'
+                },
+                {title: '操作', align: "center", width: "18%", unresize: "true", toolbar: "#blogListBar"}
+            ]]
+        });
+
+        //搜索
+        form.on('submit(search_btn)', function (data) {
+            var datas = data.field;
+            for (var property in datas) {
+                if (datas[property] === "") {
+                    delete datas[property];
+                }
+            }
+            console.log(datas);
+            tableIns.reload({
+                where: data.field
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
+        });
+
+        form.on('switch(blogStatus)', function (data) {
+            var blogStatus = data.elem.checked ? 1 : 0; //1为发布,0为草稿
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post("/admin/v1/blog/blogStatus",
+                {
+                    "blogId": data.value,
+                    "blogStatus": blogStatus
+                }, function (s) {
+                    setTimeout(function () {
+                        top.layer.close(index);
+                        form.render('select', 'blogStatus');
+                        top.layer.msg(s.message);
+                    }, 500);
+                });
+        });
+
+        form.on('switch(enableComment)', function (data) {
+            var enableComment = data.elem.checked ? 1 : 0; //1为不允许评论,0为允许评论
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post("/admin/v1/blog/blogStatus",
+                {
+                    "blogId": data.value,
+                    "enableComment": enableComment
+                }, function (s) {
+                    setTimeout(function () {
+                        top.layer.close(index);
+                        form.render('select', 'blogStatus');
+                        top.layer.msg(s.message);
+                    }, 500);
+                });
+        });
+
+        //监听工具条
+        table.on('tool(blogList)', function (obj) {
+            var data = obj.data, //获得当前行数据
+                layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            switch (layEvent) {
+                case 'del':
+                    layer.confirm('确定删除此文章？', {icon: 3, title: '提示信息'}, function (index) {
+                        $.post("/admin/v1/blog/delete",
+                            {
+                                "blogId": data.blogId
+                            }, function (s) {
+                                layer.msg(s.message);
+                            });
+                        layer.close(index);
+                        tableIns.reload();
+                    });
+                    break;
+                case 'restore':
+                    layer.confirm('确定还原此文章？', {icon: 3, title: '提示信息'}, function (index) {
+                        $.post("/admin/v1/blog/restore",
+                            {
+                                "blogId": data.blogId
+                            }, function (s) {
+                                layer.msg(s.message);
+                            });
+                        layer.close(index);
+                        tableIns.reload();
+                    });
+                    break;
+                case 'clear':
+                    layer.confirm('确定从数据库中清除？', {icon: 3, title: '提示信息'}, function (index) {
+                        $.post("/admin/v1/blog/clear",
+                            {
+                                "blogId": data.blogId
+                            }, function (s) {
+                                layer.msg(s.message);
+                            });
+                        layer.close(index);
+                        tableIns.reload();
+                    });
+                    break;
+                case 'edit':
+                    location.href = "/admin/v1/blog/edit?blogId=" + data.blogId;
+                    break;
+                default:
+                    break;
+            }
+        });
+    });
+</script>
+</body>
+</html>

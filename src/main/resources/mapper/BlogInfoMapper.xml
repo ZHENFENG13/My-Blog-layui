@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.site.blog.dao.BlogInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.site.blog.entity.BlogInfo">
+        <id column="blog_id" property="blogId" />
+        <result column="blog_title" property="blogTitle" />
+        <result column="blog_sub_url" property="blogSubUrl" />
+        <result column="blog_preface" property="blogPreface" />
+        <result column="blog_content" property="blogContent" />
+        <result column="blog_category_id" property="blogCategoryId" />
+        <result column="blog_category_name" property="blogCategoryName" />
+        <result column="blog_tags" property="blogTags" />
+        <result column="blog_status" property="blogStatus" />
+        <result column="blog_views" property="blogViews" />
+        <result column="enable_comment" property="enableComment" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        blog_id, blog_title, blog_sub_url, blog_preface, blog_content, blog_category_id, blog_category_name, blog_tags, blog_status, blog_views, enable_comment, is_deleted, create_time, update_time
+    </sql>
+
+</mapper>

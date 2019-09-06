@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>系统信息-blog</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <!-- jQuery -->
+    <script type="text/javascript" th:src="@{/X-admin/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="layui-card-body ">
+    <table id="blogConfigList" lay-filter="blogConfigList"></table>
+</div>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addBlogConfig">添加系统信息</button>
+    </div>
+</script>
+<script type="text/html" id="blogListBar">
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+<script th:inline="none">
+    layui.use(['form', 'layer', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var tableIns = table.render({
+            elem: '#blogConfigList'
+            ,url:'/admin/v1/blogConfig/list'
+            ,toolbar: '#toolbar'
+            ,cols: [[
+                {field:'configName', width:"30%", title: '参数名',unresize: "true",edit: 'text'}
+                ,{field:'configValue', width:"60%", title: '参数值',unresize: "true",edit: 'text'}
+                ,{title: '操作', align: "center", width: "10%", unresize: "true", toolbar: "#blogListBar"}
+            ]]
+        });
+
+        table.on('edit(blogConfigList)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            delete data['createTime'];
+            delete data['updateTime'];
+            $.post("/admin/v1/blogConfig/edit",data, function (s) {
+                layer.msg(s.message);
+            });
+        });
+
+        //头工具栏事件
+        table.on('toolbar(blogConfigList)', function(obj){
+            switch(obj.event){
+                case 'addBlogConfig':
+                    xadmin.open('信息添加','/admin/v1/blogConfig/add',450,300);
+                    break;
+            }
+        });
+
+        //监听工具条
+        table.on('tool(blogConfigList)', function(obj){
+            var data = obj.data, //获得当前行数据
+                layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除此配置？',{icon:3, title:'提示信息'},function(index){
+                    $.post("/admin/v1/blogConfig/del",
+                        {
+                            "configField": data.configField
+                        }, function (s) {
+                            layer.msg(s.message);
+                        });
+                    layer.close(index);
+                    tableIns.reload();
+                });
+            }
+        });
+
+    });
+</script>
+</body>
+</html>

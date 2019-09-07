@@ -62,6 +62,9 @@ spring:
 mybatis-plus:
   type-aliases-package: com.site.blog.entity
   mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    db-config:
+      table-prefix: "tb_"
 logging:
   level.com.site.blog: debug
 

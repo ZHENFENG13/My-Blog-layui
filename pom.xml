@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.zhulin.blogInfo</groupId>
-    <artifactId>my-blogInfo</artifactId>
+    <artifactId>my-blog-layui</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>my-blogInfo</name>
+    <name>my-blog-layui</name>
     <description>your personal blogInfo</description>
 
     <parent>

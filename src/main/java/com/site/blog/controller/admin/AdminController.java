@@ -196,4 +196,11 @@ public class AdminController {
             return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @ResponseBody
+    @GetMapping("/v1/reload")
+    public boolean reload(HttpSession session){
+        Integer userId = (Integer) session.getAttribute(SessionConstants.LOGIN_USER_ID);
+        return userId != null && userId != 0;
+    }
 }

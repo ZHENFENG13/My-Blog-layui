@@ -11,6 +11,8 @@
     <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
     <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
     <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <!-- jQuery -->
+    <script type="text/javascript" th:src="@{/X-admin/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
     <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
     <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
@@ -40,7 +42,7 @@
                                 <i class="layui-icon">&#xe615;</i></button>
                         </div>
                         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
-                           onclick="location.reload()" title="刷新">
+                           onclick="reload();" title="刷新">
                             <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
                     </form>
                 </div>
@@ -78,7 +80,7 @@
     {{#  } }}
     <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="clear">清除</a>
 </script>
-<script type="text/javascript" th:inline="none">
+<script type="text/javascript" th:inline="javascript">
     layui.use(['form', 'layer', 'table'], function () {
         var form = layui.form,
             layer = layui.layer,
@@ -111,8 +113,8 @@
             height: "full-110",
             toolbar: true,
             limits: [10],
-            cols: [[
-                {type: 'checkbox', field: 'blogId', fixed: "left"},
+            cols: [
+                [{type: 'checkbox', field: 'blogId', fixed: "left"},
                 {field: 'blogTitle', title: '博客标题', align: "center", unresize: "true"},
                 {field: 'blogCategoryName', title: '博客分类', align: 'center', unresize: "true"},
                 {field: 'blogTags', title: '博客标签', align: 'center', unresize: "true"},
@@ -128,8 +130,8 @@
                     unresize: "true",
                     templet: '#enableCommentTool'
                 },
-                {title: '操作', align: "center", width: "18%", unresize: "true", toolbar: "#blogListBar"}
-            ]]
+                {title: '操作', align: "center", width: "18%", unresize: "true", toolbar: "#blogListBar"}]
+            ]
         });
 
         //搜索
@@ -232,6 +234,15 @@
             }
         });
     });
+    function reload(){
+        $.get("/admin/v1/reload",function(data){
+            if (data){
+                location.reload();
+            }else{
+                parent.location.reload();
+            }
+        });
+    }
 </script>
 </body>
 </html>

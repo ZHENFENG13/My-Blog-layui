@@ -3,10 +3,10 @@ server:
 
 spring:
   datasource:
-    name: myshop
-    url: jdbc:mysql://192.168.3.20:3306/my_blog_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false
+    name: myBlog
+    url: jdbc:mysql://localhost:3306/my_blog_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false
     username: root
-    password: 123456
+    password: root
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
@@ -60,7 +60,11 @@ spring:
       content-type: text/html
 
 mybatis-plus:
-  type-aliases-package: com.zhulin.blog.entity
+  type-aliases-package: com.site.blog.entity
   mapper-locations: classpath*:mapper/*.xml
+  global-config:
+    db-config:
+      table-prefix: "tb_"
 logging:
-  level.com.zhulin.blog.dao: debug
+  level.com.site.blog: debug
+

@@ -81,7 +81,10 @@ public class MyBlogController {
     public String page(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                .lambda().orderByDesc(BlogInfo::getCreateTime));
+                .lambda()
+                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
         request.setAttribute("blogPageResult", blogPageResult);
@@ -112,6 +115,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda().like(BlogInfo::getBlogTitle, keyword)
+                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
@@ -158,6 +163,8 @@ public class MyBlogController {
             Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
             blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                     .lambda()
+                    .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
+                    .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
                     .in(BlogInfo::getBlogId, list.stream().map(BlogTagRelation::getBlogId).toArray())
                     .orderByDesc(BlogInfo::getCreateTime));
             blogPageResult = new PageResult
@@ -192,7 +199,10 @@ public class MyBlogController {
     public String category(HttpServletRequest request, @PathVariable("categoryName") String categoryName, @PathVariable("pageNum") Integer pageNum) {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                .lambda().eq(BlogInfo::getBlogCategoryName, categoryName)
+                .lambda()
+                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogCategoryName, categoryName)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);

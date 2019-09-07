@@ -11,6 +11,8 @@
     <link rel="stylesheet" th:href="@{/X-admin/css/font.css}">
     <link rel="stylesheet" th:href="@{/X-admin/css/xadmin.css}">
     <link rel="stylesheet" th:href="@{/X-admin/css/formSelects-v4.css}">
+    <!-- jQuery -->
+    <script type="text/javascript" th:src="@{/X-admin/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
     <script type="text/javascript" th:src="@{/X-admin/js/xadmin.js}" charset="utf-8"></script>
     <script type="text/javascript" th:src="@{/X-admin/js/formSelects-v4.min.js}" charset="utf-8"></script>
@@ -37,7 +39,7 @@
                                 <i class="layui-icon">&#xe615;</i></button>
                         </div>
                         <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
-                           onclick="location.reload()" title="刷新">
+                           onclick="reload();" title="刷新">
                             <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
                     </form>
                 </div>
@@ -173,6 +175,16 @@
             }
         });
     });
+
+    function reload(){
+        $.get("/admin/v1/reload",function(data){
+            if (data){
+                location.reload();
+            }else{
+                parent.location.reload();
+            }
+        });
+    }
 </script>
 </body>
 </html>

@@ -53,7 +53,7 @@
                         </div>
                         <div class="layui-col-md10 layui-show-xs-block">
                             <input type="text" name="blogPreface" th:value="${blogInfo?.blogPreface}"
-                                   lay-verify="required"  placeholder="请输入文章前言"
+                                   lay-verify="required|blogPreface" placeholder="请输入文章前言"
                                    autocomplete="off" class="layui-input"></div>
                         <div class="layui-col-md1 layui-show-xs-block">
                             <input type="checkbox" name="enableComment" th:checked="${blogInfo?.enableComment eq 0}"
@@ -129,16 +129,27 @@
         blogCategoryIds[0] = [[${blogInfo?.blogCategoryId}]];
         formSelects.data('tagId', 'server', {
             url: '/admin/v1/tags/list',
-            success: function(id, url, searchVal, result){
-                formSelects.value('tagId',[[${blogTags}]],true);
+            success: function (id, url, searchVal, result) {
+                formSelects.value('tagId', [[${blogTags}]], true);
             }
         });
         formSelects.data('blogCategoryId', 'server', {
             url: '/admin/v1/category/list',
-            success: function(id, url, searchVal, result){
-                formSelects.value('blogCategoryId',blogCategoryIds,true);
+            success: function (id, url, searchVal, result) {
+                formSelects.value('blogCategoryId', blogCategoryIds, true);
             }
         });
+
+        form.verify({
+            blogPreface: function (value, item) { //value：表单的值、item：表单的DOM对象
+                console.log(value.length);
+                if (value.length > 200) {
+                    return '介绍不能超过200个字符';
+                }
+            }
+        });
+
+
         form.on("submit(submit)", function (data) {
             var datas = data.field;
             datas.blogCategoryName = formSelects.value('blogCategoryId', 'nameStr');

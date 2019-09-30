@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -252,6 +253,7 @@ public class MyBlogController {
                 .lambda()
                 .eq(BlogComment::getBlogId, blogId)
                 .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
+                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
                 .orderByDesc(BlogComment::getCommentCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 5, commentPage);
@@ -309,42 +311,14 @@ public class MyBlogController {
      */
     @PostMapping(value = "/blog/comment")
     @ResponseBody
-    public Result comment(HttpServletRequest request, HttpSession session,
-                          @RequestParam Long blogId, @RequestParam String commentator,
-                          @RequestParam String email, @RequestParam String websiteUrl,
-                          @RequestParam String commentBody) {
+    public Result comment(HttpServletRequest request,
+                          HttpSession session,
+                          @Validated BlogComment blogComment) {
         String ref = request.getHeader("Referer");
         if (StringUtils.isEmpty(ref)) {
             return ResultGenerator.genFailResult("非法请求");
         }
-        if (null == blogId || blogId < 0) {
-            return ResultGenerator.genFailResult("非法请求");
-        }
-        if (StringUtils.isEmpty(commentator)) {
-            return ResultGenerator.genFailResult("请输入称呼");
-        }
-        if (StringUtils.isEmpty(email)) {
-            return ResultGenerator.genFailResult("请输入邮箱地址");
-        }
-        if (!PatternUtils.isEmail(email)) {
-            return ResultGenerator.genFailResult("请输入正确的邮箱地址");
-        }
-        if (StringUtils.isEmpty(commentBody)) {
-            return ResultGenerator.genFailResult("请输入评论内容");
-        }
-        if (commentBody.trim().length() > 200) {
-            return ResultGenerator.genFailResult("评论内容过长");
-        }
-        BlogComment comment = new BlogComment();
-        comment.setBlogId(blogId);
-        comment.setCommentCreateTime(DateUtils.getLocalCurrentDate());
-        comment.setCommentator(MyBlogUtils.cleanString(commentator));
-        comment.setEmail(email);
-        if (PatternUtils.isURL(websiteUrl)) {
-            comment.setWebsiteUrl(websiteUrl);
-        }
-        comment.setCommentBody(MyBlogUtils.cleanString(commentBody));
-        boolean flag = blogCommentService.save(comment);
+        boolean flag = blogCommentService.save(blogComment);
         if (flag){
             return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
         }

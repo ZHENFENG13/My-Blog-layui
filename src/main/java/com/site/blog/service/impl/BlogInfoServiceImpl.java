@@ -2,6 +2,7 @@ package com.site.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.site.blog.constants.BlogStatusConstants;
 import com.site.blog.controller.vo.SimpleBlogListVO;
 import com.site.blog.entity.BlogInfo;
 import com.site.blog.dao.BlogInfoMapper;
@@ -32,7 +33,10 @@ public class BlogInfoServiceImpl extends ServiceImpl<BlogInfoMapper, BlogInfo> i
     public List<SimpleBlogListVO> getNewBlog() {
         List<SimpleBlogListVO> simpleBlogListVOS = new ArrayList<>();
         Page<BlogInfo> page = new Page<>(1,5);
-        blogInfoMapper.selectPage(page,null);
+        blogInfoMapper.selectPage(page,new QueryWrapper<BlogInfo>()
+                .lambda()
+                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO));
         for (BlogInfo blogInfo : page.getRecords()){
             SimpleBlogListVO simpleBlogListVO = new SimpleBlogListVO();
             BeanUtils.copyProperties(blogInfo, simpleBlogListVO);
@@ -46,7 +50,10 @@ public class BlogInfoServiceImpl extends ServiceImpl<BlogInfoMapper, BlogInfo> i
         List<SimpleBlogListVO> simpleBlogListVOS = new ArrayList<>();
         Page<BlogInfo> page = new Page<>(1,5);
         blogInfoMapper.selectPage(page,new QueryWrapper<BlogInfo>()
-                .lambda().orderByDesc(BlogInfo::getBlogViews));
+                .lambda()
+                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .orderByDesc(BlogInfo::getBlogViews));
         for (BlogInfo blogInfo : page.getRecords()){
             SimpleBlogListVO simpleBlogListVO = new SimpleBlogListVO();
             BeanUtils.copyProperties(blogInfo, simpleBlogListVO);

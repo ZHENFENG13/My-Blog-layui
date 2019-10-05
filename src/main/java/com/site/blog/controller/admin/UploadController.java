@@ -44,7 +44,7 @@ public class UploadController {
         File destFile = new File(UploadConstants.UPLOAD_AUTHOR_IMG + newFileName);
         try {
             if (!fileDirectory.exists()) {
-                if (!fileDirectory.mkdir()) {
+                if (!fileDirectory.mkdirs()) {
                     throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
                 }
             }

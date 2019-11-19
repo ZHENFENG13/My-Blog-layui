@@ -120,6 +120,7 @@
 </div>
 <footer th:replace="blog/amaze/footer::footer-fragment"></footer>
 </body>
+<script th:src="@{/blog/plugins/jquery/jquery.min.js}"></script>
 <script th:src="@{/blog/plugins/highlight/highlight.pack.js}"></script>
 <script th:src="@{/blog/plugins/comment/valid.js}"></script>
 <script th:src="@{/blog/plugins/comment/comment.js}"></script>
@@ -152,22 +153,22 @@
                             var strVal = "";
                             Array.from(res.data).forEach((value) => {
                                 strVal += `<div class="cont">
-                                    <div class="img" style="width:50px;">
-                                        <img src="/blog/amaze/images/wordImg.png" alt="">
+                                    <div class="img">
+                                        <img src="/blog/amaze/images/wordImg.png" style="width:50px;" alt="">
+                                        <p class="tit"><span class="name">${value.commentator}</span><span class="data">${value.commentCreateTime}</span></p>
                                     </div>
                                     <div class="text">
-                                        <p class="tit"><span class="name">${value.commentator}</span><span class="data">${value.commentCreateTime}</span></p>
                                         <p class="ct">${value.commentBody}</p>
                                     </div>`;
-                                if (value.replyBody !== "" && value.replyBody != null) {
-                                    strVal += `<div class="cont" style="padding-left: 20px;">
+                            if (value.replyBody !== "" && value.replyBody != null) {
+                                strVal += `<div class="cont" style="padding-left: 20px;">
                                       <div class="text">
                                         <p class="tit"><span class="name">回复</span><span class="data">${value.replyCreateTime}</span></p>
                                         <p class="ct">${value.replyBody}</p>
                                       </div></div>`
-                                }
-                                strVal += `</div><hr/>`;
-                            });
+                            }
+                            strVal += `</div><hr/>`;
+                        });
                             $("#list-cont").html(strVal);
                         }
                     );

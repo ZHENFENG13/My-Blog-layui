@@ -62,7 +62,7 @@
                                    autocomplete="off" class="layui-input"></div>
                         <div class="layui-col-md1 layui-show-xs-block">
                             <input type="checkbox" name="enableComment" th:checked="${blogInfo?.enableComment eq 0}"
-                                   lay-skin="switch" value="1" lay-text="允许评论|不允许评论">
+                                   lay-skin="switch" value="0" lay-text="允许评论|不允许评论">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn" lay-submit="" lay-filter="submit">
@@ -160,6 +160,9 @@
             datas.blogCategoryName = formSelects.value('blogCategoryId', 'nameStr');
             datas.blogTags = formSelects.value('tagId', 'nameStr');
             datas.blogTagIds = formSelects.value('tagId', 'val');
+            if("" === datas.enableComment || datas.enableComment == null){
+                datas.enableComment = 1;
+            }
             var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
             console.log(datas);
             // 提交信息

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,6 +7,7 @@
     <meta name="description" th:content="${configurations.get('websiteDescription')}">
     <meta name="viewport" content="width=device-width">
     <link rel="shortcut icon" th:href="@{${configurations.get('websiteIcon')}}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/X-admin/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/blog/amaze/css/base.css}">
     <!-- highlight -->
     <link rel="stylesheet" th:href="@{/blog/plugins/highlight/styles/paraiso-light.css}">
@@ -14,6 +15,7 @@
         .hljs {
             background: none;
         }
+
         pre code {
             white-space: pre;
         }
@@ -55,6 +57,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </header>
 <div class="container">
     <div class="am-g am-g-fixed blog-fixed">
@@ -70,112 +73,48 @@
             <hr>
         </div>
     </div>
-    <aside class="comments" id="comments">
-        <th:block th:if="${null != commentPageResult}">
-            <th:block th:each="comment,iterStat : ${commentPageResult.list}">
-                <article class="comment">
-                    <header class="clearfix">
-                        <img th:src="@{/blog/default/img/avatar.png}" class="avatar">
-                        <div class="meta">
-                            <h3 th:text="${comment.commentator}"></h3>
-                            <span class="date">
-                                       评论时间：<th:block
-                                    th:text="${#dates.format(comment.commentCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block>
-                                    </span>
-                        </div>
-                    </header>
-                    <div class="body">
-                        <th:block th:text="${comment.commentBody}"></th:block>
-                    </div>
-                </article>
-                <th:block th:unless="${#strings.isEmpty(comment.replyBody)}">
-                    <article class="comment reply">
-                        <header class="clearfix">
-                            <img th:src="@{${configurations.get('yourAvatar')}}"
-                                 style="float: left;border-radius: 100px;width: 50px;">
-                            <div class="meta2">
-                                <h3 th:text="${configurations.get('yourName')}">十三</h3>
-                                <span class="date">
-                                        回复时间： <th:block
-                                        th:text="${#dates.format(comment.replyCreateTime, 'yyyy-MM-dd HH:mm:ss')}"></th:block>
-                                    </span>
-
-                            </div>
-                        </header>
-                        <div class="reply-body">
-                            <th:block th:text="${comment.replyBody}"></th:block>
-                        </div>
-                    </article>
-                </th:block>
-            </th:block>
-        </th:block>
-        <th:block th:if="${null != commentPageResult}">
-            <ul class="am-pagination">
-                <li th:class="${commentPageResult.currPage==1}?'disabled' : ''"><a
-                        th:href="@{${commentPageResult.currPage==1}?'##':'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage-1}+'#comments'}">&laquo;</a>
-                </li>
-                <li th:if="${commentPageResult.currPage-3 >=1}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage-3}+'#comments'}"
-                        th:text="${commentPageResult.currPage -3}">1</a></li>
-                <li th:if="${commentPageResult.currPage-2 >=1}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage-2}+'#comments'}"
-                        th:text="${commentPageResult.currPage -2}">1</a></li>
-                <li th:if="${commentPageResult.currPage-1 >=1}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage-1}+'#comments'}"
-                        th:text="${commentPageResult.currPage -1}">1</a></li>
-                <li class="active"><a href="#" th:text="${commentPageResult.currPage}">1</a></li>
-                <li th:if="${commentPageResult.currPage+1 <=commentPageResult.totalPage}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage+1}+'#comments'}"
-                        th:text="${commentPageResult.currPage +1}">1</a></li>
-                <li th:if="${commentPageResult.currPage+2 <=commentPageResult.totalPage}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage+2}+'#comments'}"
-                        th:text="${commentPageResult.currPage +2}">1</a></li>
-                <li th:if="${commentPageResult.currPage+3 <=commentPageResult.totalPage}"><a
-                        th:href="@{'/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage+3}+'#comments'}"
-                        th:text="${commentPageResult.currPage +3}">1</a></li>
-                <li th:class="${commentPageResult.currPage==commentPageResult.totalPage}?'disabled' : ''"><a
-                        th:href="@{${commentPageResult.currPage==commentPageResult.totalPage}?'##' : '/blog/'+${blogDetailVO.blogId}+'?commentPage=' + ${commentPageResult.currPage+1}+'#comments'}">&raquo;</a>
-                </li>
-            </ul>
-        </th:block>
-    </aside>
-    <th:block th:if="${blogDetailVO.enableComment==0}">
-        <aside class="create-comment" id="create-comment">
-            <hr>
-            <h2><i class="fa fa-pencil"></i> 添加评论</h2>
-            <table id="commentForm" class="form">
-                <tbody>
-                <tr>
-                    <td>
-                        <input type="hidden" id="blogId" name="blogId" autocomplete="off" th:value="${blogDetailVO.blogId}"></input>
-                        <input type="text" name="commentator" autocomplete="off" id="commentator" placeholder="(*必填)怎么称呼你?">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="email" name="email" autocomplete="off" id="email" placeholder="(*必填)你的联系邮箱">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="text" name="websiteUrl" autocomplete="off" id="websiteUrl" placeholder="你的网站地址(可不填)">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <textarea rows="5" name="commentBody" id="commentBody" placeholder="(*必填)请输入你的评论"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <button id="commentSubmit" type="submit"
-                                class="submit am-btn am-btn-primary">提交
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+    <th:block th:if="${blogDetailVO.commentCount != 0}">
+        <div id="volume" class="volume">
+            全部留言 <span th:text="${blogDetailVO.commentCount}"></span>
+        </div>
+        <aside class="comments" id="comments">
+            <div id="list-cont" class="list-cont">
+            </div>
+            <div id="paging" style="text-align: center;"></div>
         </aside>
+    </th:block>
+    <th:block th:if="${blogDetailVO.enableComment==0}">
+        <div class="layui-form layui-form-pane">
+            <h2><i class="fa fa-pencil"></i> 添加评论</h2>
+            <div class="layui-form-item">
+                <label class="layui-form-label">昵称</label>
+                <div class="layui-input-block">
+                    <input type="hidden" id="blogId" autocomplete="off" th:value="${blogDetailVO.blogId}"/>
+                    <input type="text" id="commentator" autocomplete="off" placeholder="必填,1-6个字符" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" id="email" autocomplete="off" placeholder="必填" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">网站地址</label>
+                <div class="layui-input-block">
+                    <input type="text" id="websiteUrl" autocomplete="off" placeholder="可不填" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">评论内容</label>
+                <div class="layui-input-block">
+                    <textarea id="commentBody" placeholder="既然来了,不如说几句" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button type="submit" class="layui-btn" id="commentSubmit">提交</button>
+            </div>
+        </div>
     </th:block>
     <p class="back-top" id="back-top" style="display:none"><a href="#top"><span></span></a></p>
 </div>
@@ -187,8 +126,56 @@
 <script th:src="@{/blog/plugins/comment/comment.js}"></script>
 <!-- sweetalert -->
 <script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
-<script>
-    $(function () {
+<!-- 评论 -->
+<script th:src="@{/X-admin/lib/layui/layui.all.js}"></script>
+<script th:inline="javascript">
+    ;!function () {
+        var laypage = layui.laypage,
+            $ = layui.$;
+
+        var count = [[${blogDetailVO.commentCount}]];
+
+        initBlogList(1, 5, [[${blogDetailVO.blogId}]]);
+
+        // 初始化评论列表
+        function initBlogList(page, limit, blogId) {
+            laypage.render({
+                elem: 'paging'
+                , count: count
+                , limit: 5
+                , jump: function (obj, first) {
+                    $.get('/blog/listComment',
+                        {
+                            page: obj.curr,
+                            limit: obj.limit,
+                            blogId: blogId
+                        }, function (res) {
+                            var strVal = "";
+                            Array.from(res.data).forEach((value) => {
+                                strVal += `<div class="cont">
+                                    <div class="img" style="width:50px;">
+                                        <img src="/blog/amaze/images/wordImg.png" alt="">
+                                    </div>
+                                    <div class="text">
+                                        <p class="tit"><span class="name">${value.commentator}</span><span class="data">${value.commentCreateTime}</span></p>
+                                        <p class="ct">${value.commentBody}</p>
+                                    </div>`;
+                                if (value.replyBody !== "" && value.replyBody != null) {
+                                    strVal += `<div class="cont" style="padding-left: 20px;">
+                                      <div class="text">
+                                        <p class="tit"><span class="name">回复</span><span class="data">${value.replyCreateTime}</span></p>
+                                        <p class="ct">${value.replyBody}</p>
+                                      </div></div>`
+                                }
+                                strVal += `</div><hr/>`;
+                            });
+                            $("#list-cont").html(strVal);
+                        }
+                    );
+                }
+            });
+        }
+
         $("#back-top").hide();
         $(window).scroll(function () {
             if ($(this).scrollTop() > 300) {
@@ -210,6 +197,6 @@
         });
 
         $('article h1, article h2, article h3, article h4, article h5').find('a').removeAttr('target')
-    })
+    }();
 </script>
 </html>

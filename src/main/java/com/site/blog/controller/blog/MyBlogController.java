@@ -7,25 +7,27 @@ import com.site.blog.constants.BlogStatusConstants;
 import com.site.blog.constants.HttpStatusConstants;
 import com.site.blog.constants.LinkConstants;
 import com.site.blog.controller.vo.BlogDetailVO;
+import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
 import com.site.blog.entity.*;
 import com.site.blog.service.*;
-import com.site.blog.util.*;
+import com.site.blog.util.MarkDownUtils;
+import com.site.blog.util.PageResult;
+import com.site.blog.util.ResultGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -224,12 +226,11 @@ public class MyBlogController {
      *
      * @param request
      * @param blogId
-     * @param commentPage
      * @return java.lang.String
      * @date 2019/9/6 13:09
      */
     @GetMapping({"/blog/{blogId}", "/article/{blogId}"})
-    public String detail(HttpServletRequest request, @PathVariable("blogId") Long blogId, @RequestParam(value = "commentPage", required = false, defaultValue = "1") Integer commentPage) {
+    public String detail(HttpServletRequest request, @PathVariable("blogId") Long blogId) {
         // 获得文章info
         BlogInfo blogInfo = blogInfoService.getById(blogId);
         List<BlogTagRelation> blogTagRelations = blogTagRelationService.list(new QueryWrapper<BlogTagRelation>()
@@ -247,22 +248,12 @@ public class MyBlogController {
             tagList = blogTagService.list(new QueryWrapper<BlogTag>().lambda().in(BlogTag::getTagId, tagIds));
         }
 
-        // 获得关联的评论
-        Page<BlogComment> page = new Page<BlogComment>(commentPage, 5);
-        blogCommentService.page(page, new QueryWrapper<BlogComment>()
-                .lambda()
-                .eq(BlogComment::getBlogId, blogId)
-                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
-                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
-                .orderByDesc(BlogComment::getCommentCreateTime));
-        PageResult blogPageResult = new PageResult
-                (page.getRecords(), page.getTotal(), 5, commentPage);
-
         // 关联评论的Count
         Integer blogCommentCount = blogCommentService.count(new QueryWrapper<BlogComment>()
                 .lambda()
-                .eq(BlogComment::getBlogId, blogId)
-                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE));
+                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
+                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogComment::getBlogId, blogId));
 
         BlogDetailVO blogDetailVO = new BlogDetailVO();
         BeanUtils.copyProperties(blogInfo,blogDetailVO);
@@ -270,12 +261,32 @@ public class MyBlogController {
         blogDetailVO.setCommentCount(blogCommentCount);
         request.setAttribute("blogDetailVO", blogDetailVO);
         request.setAttribute("tagList", tagList);
-        if (!page.getRecords().isEmpty()){
-            request.setAttribute("commentPageResult", blogPageResult);
-        }
         request.setAttribute("pageName", "详情");
         request.setAttribute("configurations", blogConfigService.getAllConfigs());
         return "blog/" + theme + "/detail";
+    }
+
+    /**
+     * 评论列表
+     * @param ajaxPutPage
+     * @param blogId
+     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
+     * @date 2019/11/19 8:42
+     */
+    @GetMapping("/blog/listComment")
+    @ResponseBody
+    public AjaxResultPage<BlogComment> listComment(AjaxPutPage<BlogComment> ajaxPutPage,Integer blogId){
+        Page<BlogComment> page = ajaxPutPage.putPageToPage();
+        blogCommentService.page(page, new QueryWrapper<BlogComment>()
+                .lambda()
+                .eq(BlogComment::getBlogId, blogId)
+                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
+                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
+                .orderByDesc(BlogComment::getCommentCreateTime));
+        AjaxResultPage<BlogComment> ajaxResultPage = new AjaxResultPage<>();
+        ajaxResultPage.setCount(page.getTotal());
+        ajaxResultPage.setData(page.getRecords());
+        return ajaxResultPage;
     }
 
     /**
@@ -312,7 +323,6 @@ public class MyBlogController {
     @PostMapping(value = "/blog/comment")
     @ResponseBody
     public Result comment(HttpServletRequest request,
-                          HttpSession session,
                           @Validated BlogComment blogComment) {
         String ref = request.getHeader("Referer");
         if (StringUtils.isEmpty(ref)) {

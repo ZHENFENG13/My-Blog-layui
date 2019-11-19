@@ -29,6 +29,7 @@ public class ApplicationControllerExceptionHandler {
      * @date 2019/9/8 9:58
      */
     @ExceptionHandler(value = BindException.class)
+    @ResponseBody
     public Result BindException(BindException e) {
         return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
@@ -41,6 +42,7 @@ public class ApplicationControllerExceptionHandler {
      * @date 2019/9/8 9:58
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ResponseBody
     public Result handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }

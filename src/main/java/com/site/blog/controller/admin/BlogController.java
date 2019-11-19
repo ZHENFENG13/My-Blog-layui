@@ -116,7 +116,7 @@ public class BlogController {
         Map<String,Object> result = new HashMap<>();
         try {
             if (!fileDirectory.exists()) {
-                if (!fileDirectory.mkdir()) {
+                if (!fileDirectory.mkdirs()) {
                     throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
                 }
             }

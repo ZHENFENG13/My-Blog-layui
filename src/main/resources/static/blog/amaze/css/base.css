@@ -4547,13 +4547,6 @@ aside.create-comment hr {
     margin-bottom: 30px;
 }
 
-@media (min-width: 768px) and (max-width: 979px) {
-    aside.comments hr,
-    aside.create-comment hr {
-        width: 415px;
-    }
-}
-
 @media (max-width: 767px) {
     aside.comments hr,
     aside.create-comment hr {
@@ -4632,4 +4625,56 @@ aside.comments .comment header .meta {
     color: #9199a1;
     line-height: 18px;
     display: inline-block;
+}
+
+/*评论列表样式*/
+
+.list-cont .cont {
+    max-width: 100%;
+    padding: 20px 0 0px 0;
+    margin: 0 auto;
+}
+
+.cont img{
+    float: left;
+}
+
+.list-cont .cont .text {
+    padding-left: 70px;
+    line-height: 22px;
+    color: #333;
+}
+
+.list-cont .cont .text .tit {
+    margin-bottom: 18px;
+}
+
+.list-cont .cont .text .data {
+    float: right;
+}
+
+.volume span {
+    padding-left: 30px;
+    color: #f37d25;
+}
+
+@media screen and (max-width: 768px){
+    .list-cont .cont .text {
+        padding-left: 0;
+        line-height: 22px;
+        color: #333;
+    }
+
+    .list-cont .cont .text .tit {
+        line-height: 50px;
+        margin-bottom: 0;
+    }
+
+    .list-cont .cont .text .tit .name {
+        margin-left: 20px;
+    }
+
+    .list-cont .cont .text .ct {
+        margin-top: 20px;
+    }
 }

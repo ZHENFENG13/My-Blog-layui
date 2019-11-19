@@ -48,13 +48,14 @@ private static final long serialVersionUID=1L;
      */
     @TableField("commentator")
     @NotBlank(message = "请输入称呼")
+    @Length(min = 1,max = 6,message = "名称过长或过短")
     private String commentator;
 
     /**
      * 评论人的邮箱
      */
     @TableField("email")
-    @Email
+    @Email(message = "邮箱地址不合法")
     private String email;
 
     /**
@@ -75,7 +76,7 @@ private static final long serialVersionUID=1L;
      * 评论提交时间
      */
     @TableField("comment_create_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")    //将Date转换成String,一般后台传值给前台时
+    @JsonFormat(pattern = "yyyy/MM/dd", timezone = "GMT+8")    //将Date转换成String,一般后台传值给前台时
     private Date commentCreateTime;
 
     /**
@@ -94,7 +95,7 @@ private static final long serialVersionUID=1L;
      * 回复时间
      */
     @TableField("reply_create_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy/MM/dd", timezone = "GMT+8")
     private Date replyCreateTime;
 
     /**

@@ -56,10 +56,7 @@ public class AjaxPutPage<T> {
      * @return
      */
     public Page<T> putPageToPage(){
-        Page<T> page = new Page<T>();
-        page.setCurrent(this.page);
-        page.setSize(this.limit);
-        return page;
+        return new Page<T>(this.page,this.limit);
     }
 
     @Override

@@ -4,7 +4,7 @@
 
 **坚持不易，各位朋友如果觉得项目还不错的话可以给项目一个 star 吧，也是对我们一直更新代码的一种鼓励啦，谢谢各位的支持。**
 
-- **该项目基于原 [My-Blog](https://github.com/ZHENFENG13/My-Blog) 项目二次开发的 Spring Boot 实践项目，后台采用全新的 layui 进行重构；**
+- **该项目基于原 [My-Blog](https://github.com/ZHENFENG13/My-Blog) 项目二次开发的 Spring Boot 实践项目，后台和评论采用全新的 layui 进行重构；**
 - **你可以把它作为 SpringBoot 技术栈的学习项目，My Blog 也足够符合要求，且代码和功能完备；**
 - **技术栈新颖且知识点丰富，学习后可以提升大家对于知识的理解和掌握；**
 - **在原 [My-Blog](https://github.com/ZHENFENG13/My-Blog) 项目的基础上增加了 lombok 、MyBatis-Plus 框架的使用，数据源也切换为 Druid 数据源。**
@@ -76,6 +76,10 @@ My-Blog-layui 的开发者是朱同学，是我在 QQ 群里认识的一位朋�
 
   ![link03](static-files/link03.png)
   
+- 评论版块
+
+  ![comment](static-files/comment.png)
+
 ## 感谢
 
 - [myzhulin](https://github.com/myzhulin)

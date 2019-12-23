@@ -3404,13 +3404,11 @@
         var pageBreakReg    = regexs.pageBreak;
 
         markedRenderer.emoji = function(text) {
-            
-            text = text.replace(editormd.regexs.emojiDatetime, function($1) {           
+            text = text.replace(editormd.regexs.emojiDatetime, function($1) {
                 return $1.replace(/:/g, "&#58;");
             });
             
             var matchs = text.match(emojiReg);
-
             if (!matchs || !settings.emoji) {
                 return text;
             }
@@ -3473,7 +3471,7 @@
         markedRenderer.atLink = function(text) {
 
             if (atLinkReg.test(text))
-            { 
+            {
                 if (settings.atLink) 
                 {
                     text = text.replace(emailReg, function($1, $2, $3, $4) {
@@ -3650,7 +3648,6 @@
                 return "<li>" + this.atLink(this.emoji(text)) + "</li>";
             }
         };
-        
         return markedRenderer;
     };
     
@@ -3918,7 +3915,7 @@
             saveTo        = div.find("textarea");
         }        
         
-        var markdownDoc   = (settings.markdown === "") ? saveTo.val() : settings.markdown; 
+        var markdownDoc   = (settings.markdown === "") ? saveTo.val() : settings.markdown;
         var markdownToC   = [];
 
         var rendererOptions = {  
@@ -3946,13 +3943,11 @@
             smartLists  : true,
             smartypants : true
         };
-        
+
 		markdownDoc = new String(markdownDoc);
         
         var markdownParsed = marked(markdownDoc, markedOptions);
-        
         markdownParsed = editormd.filterHTMLTags(markdownParsed, settings.htmlDecode);
-        
         if (settings.markdownSourceCode) {
             saveTo.text(markdownDoc);
         } else {

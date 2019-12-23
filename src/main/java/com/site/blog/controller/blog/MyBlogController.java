@@ -257,7 +257,6 @@ public class MyBlogController {
 
         BlogDetailVO blogDetailVO = new BlogDetailVO();
         BeanUtils.copyProperties(blogInfo,blogDetailVO);
-        blogDetailVO.setBlogContent(MarkDownUtils.mdToHtml(blogDetailVO.getBlogContent()));
         blogDetailVO.setCommentCount(blogCommentCount);
         request.setAttribute("blogDetailVO", blogDetailVO);
         request.setAttribute("tagList", tagList);

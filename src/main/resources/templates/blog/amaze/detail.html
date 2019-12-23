@@ -11,8 +11,11 @@
     <link rel="stylesheet" th:href="@{/blog/amaze/css/base.css}">
     <!-- highlight -->
     <link rel="stylesheet" th:href="@{/blog/plugins/highlight/styles/paraiso-light.css}">
-    <link rel="stylesheet" th:href="@{/X-admin/editormd/css/editormd.preview.css}" />
     <style>
+        .hljs {
+            background: none;
+        }
+
         pre code {
             white-space: pre;
         }
@@ -59,15 +62,14 @@
 <div class="container">
     <div class="am-g am-g-fixed blog-fixed">
         <div class="am-u-lg-12 am-u-sm-12">
-<!--            <article class="am-article blog-article-p article-trigger">-->
-                <div id="test-markdown-view">
-<!--                    <textarea style="display:none;">### Hello world!</textarea>-->
-                    <textarea th:utext="${blogDetailVO.blogContent}"/>
+            <article class="am-article blog-article-p article-trigger">
+                <div id="post-content" class="am-article-bd article-body">
+                    <th:block th:utext="${blogDetailVO.blogContent}"/>
+                    <aside class="blog-rights clearfix">
+                        <p>本站文章除注明转载/出处外，皆为作者原创，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
+                    </aside>
                 </div>
-                <aside class="blog-rights clearfix">
-                    <p>本站文章除注明转载/出处外，皆为作者原创，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
-                </aside>
-<!--            </article>-->
+            </article>
             <hr>
         </div>
     </div>
@@ -119,17 +121,7 @@
 <footer th:replace="blog/amaze/footer::footer-fragment"></footer>
 </body>
 <script th:src="@{/blog/plugins/jquery/jquery.min.js}"></script>
-
-<script src="/X-admin/editormd/lib/marked.min.js"></script>
-<script src="/X-admin/editormd/lib/prettify.min.js"></script>
-<script src="/X-admin/editormd/lib/raphael.min.js"></script>
-<script src="/X-admin/editormd/lib/underscore.min.js"></script>
-<script src="/X-admin/editormd/lib/sequence-diagram.min.js"></script>
-<script src="/X-admin/editormd/lib/flowchart.min.js"></script>
-<script src="/X-admin/editormd/lib/jquery.flowchart.min.js"></script>
-<script src="/X-admin/editormd/src/editormd.js"></script>
-
-<!--<script th:src="@{/blog/plugins/highlight/highlight.pack.js}"></script>-->
+<script th:src="@{/blog/plugins/highlight/highlight.pack.js}"></script>
 <script th:src="@{/blog/plugins/comment/valid.js}"></script>
 <script th:src="@{/blog/plugins/comment/comment.js}"></script>
 <!-- sweetalert -->
@@ -144,15 +136,6 @@
         var count = [[${blogDetailVO.commentCount}]];
 
         initBlogList(1, 5, [[${blogDetailVO.blogId}]]);
-
-        testEditormdView = editormd.markdownToHTML("test-markdown-view", {
-            htmlDecode      : "style,script,iframe",
-            emoji           : true,
-            taskList        : true,
-            tex             : true,
-            flowChart       : true,
-            sequenceDiagram : true
-        });
 
         // 初始化评论列表
         function initBlogList(page, limit, blogId) {
@@ -207,6 +190,10 @@
                 scrollTop: 0
             }, 800);
             return false;
+        });
+
+        $('pre code').each(function (i, block) {
+            hljs.highlightBlock(block);
         });
 
         $('article h1, article h2, article h3, article h4, article h5').find('a').removeAttr('target')

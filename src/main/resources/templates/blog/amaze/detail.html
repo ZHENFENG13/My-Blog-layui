@@ -9,8 +9,6 @@
     <link rel="shortcut icon" th:href="@{${configurations.get('websiteIcon')}}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/X-admin/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/blog/amaze/css/base.css}">
-    <!-- highlight -->
-    <link rel="stylesheet" th:href="@{/blog/plugins/highlight/styles/paraiso-light.css}">
     <link rel="stylesheet" th:href="@{/X-admin/editormd/css/editormd.preview.css}" />
     <style>
         pre code {
@@ -60,7 +58,7 @@
     <div class="am-g am-g-fixed blog-fixed">
         <div class="am-u-lg-12 am-u-sm-12">
             <article id="test-markdown-view">
-                <textarea th:utext="${blogDetailVO.blogContent}"/>
+<!--                <textarea th:utext="${blogDetailVO.blogContent}"/>-->
             </article>
             <aside class="blog-rights clearfix">
                 <p>本站文章除注明转载/出处外，皆为作者原创，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
@@ -126,7 +124,6 @@
 <script src="/X-admin/editormd/lib/jquery.flowchart.min.js"></script>
 <script src="/X-admin/editormd/src/editormd.js"></script>
 
-<!--<script th:src="@{/blog/plugins/highlight/highlight.pack.js}"></script>-->
 <script th:src="@{/blog/plugins/comment/valid.js}"></script>
 <script th:src="@{/blog/plugins/comment/comment.js}"></script>
 <!-- sweetalert -->
@@ -148,7 +145,8 @@
             taskList        : true,
             tex             : true,
             flowChart       : true,
-            sequenceDiagram : true
+            sequenceDiagram : true,
+            markdown        : [[${blogDetailVO.blogContent}]]
         });
 
         // 初始化评论列表

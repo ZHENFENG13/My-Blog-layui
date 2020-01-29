@@ -32,4 +32,12 @@ public interface BlogInfoService extends IService<BlogInfo> {
      */
     List<SimpleBlogListVO> getHotBlog();
 
+    /**
+     * 清除文章
+     * @param blogId
+     * @return boolean
+     * @date 2020/1/29 21:54
+     */
+    boolean clearBlogInfo(Long blogId);
+
 }

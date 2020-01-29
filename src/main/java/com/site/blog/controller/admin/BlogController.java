@@ -149,19 +149,9 @@ public class BlogController {
         }
         blogInfo.setCreateTime(DateUtils.getLocalCurrentDate());
         blogInfo.setUpdateTime(DateUtils.getLocalCurrentDate());
-        blogInfoService.saveOrUpdate(blogInfo);
-        // 判断是否是update
-        if (blogInfo.getBlogId() != null){
-            Long blogId = blogInfo.getBlogId();
-            List<BlogTagRelation> list = blogTagIds.stream().map(blogTagId -> new BlogTagRelation()
-                    .setTagId(blogTagId)
-                    .setBlogId(blogId)).collect(Collectors.toList());
-            blogTagRelationService.remove(new QueryWrapper<BlogTagRelation>()
-                    .lambda()
-                    .eq(BlogTagRelation::getBlogId,blogInfo.getBlogId()));
-            if (blogTagRelationService.saveBatch(list)){
-                return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
-            }
+        if (blogInfoService.saveOrUpdate(blogInfo)){
+            blogTagRelationService.removeAndsaveBatch(blogTagIds,blogInfo);
+            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
     }
@@ -232,14 +222,7 @@ public class BlogController {
     @ResponseBody
     @PostMapping("/v1/blog/clear")
     public Result clearBlog(@RequestParam Long blogId){
-        QueryWrapper<BlogTagRelation> TagRelationWrapper = new QueryWrapper<>();
-        TagRelationWrapper.lambda().eq(BlogTagRelation::getBlogId,blogId);
-        QueryWrapper<BlogComment> CommentWrapper = new QueryWrapper<>();
-        CommentWrapper.lambda().eq(BlogComment::getBlogId,blogId);
-        boolean flag = blogInfoService.removeById(blogId)
-                && blogTagRelationService.remove(TagRelationWrapper)
-                && blogCommentService.remove(CommentWrapper);
-        if (flag){
+        if (blogInfoService.clearBlogInfo(blogId)){
             return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);

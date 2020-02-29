@@ -48,7 +48,8 @@ public class BlogInfoServiceImpl extends ServiceImpl<BlogInfoMapper, BlogInfo> i
         blogInfoMapper.selectPage(page,new QueryWrapper<BlogInfo>()
                 .lambda()
                 .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO));
+                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .orderByDesc(BlogInfo::getCreateTime));
         for (BlogInfo blogInfo : page.getRecords()){
             SimpleBlogListVO simpleBlogListVO = new SimpleBlogListVO();
             BeanUtils.copyProperties(blogInfo, simpleBlogListVO);

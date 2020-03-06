@@ -16,6 +16,6 @@ public interface AdminUserService extends IService<AdminUser> {
     
     boolean validatePassword(Integer userId,String oldPwd);
 
-    boolean updateUserInfo(AdminUser adminUser, BlogConfig blogConfig);
+    boolean updateUserInfo(AdminUser adminUser);
 
 }

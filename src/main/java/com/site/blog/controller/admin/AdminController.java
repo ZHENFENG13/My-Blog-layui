@@ -13,7 +13,10 @@ import com.site.blog.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 
@@ -176,20 +179,17 @@ public class AdminController {
     @ResponseBody
     @PostMapping("/v1/userInfo")
     public Result userInfoUpdate(HttpSession session,String userName, String newPwd,
-                                 String nickName, String sysAuthorImg) {
+                                 String nickName) {
         if (StringUtils.isEmpty(newPwd) || StringUtils.isEmpty(nickName)) {
             return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST);
         }
         Integer loginUserId = (int) session.getAttribute(SessionConstants.LOGIN_USER_ID);
-        BlogConfig blogConfig = new BlogConfig()
-                .setConfigField(SysConfigConstants.SYS_AUTHOR_IMG.getConfigField())
-                .setConfigValue(sysAuthorImg);
         AdminUser adminUser = new AdminUser()
                 .setAdminUserId(loginUserId)
                 .setLoginUserName(userName)
                 .setNickName(nickName)
                 .setLoginPassword(MD5Utils.MD5Encode(newPwd, "UTF-8"));
-        if (adminUserService.updateUserInfo(adminUser,blogConfig)) {
+        if (adminUserService.updateUserInfo(adminUser)) {
             //修改成功后清空session中的数据，前端控制跳转至登录页
             return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,"/admin/v1/logout");
         } else {

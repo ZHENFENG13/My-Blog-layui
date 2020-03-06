@@ -1,11 +1,15 @@
 package com.site.blog.controller.admin;
 
 import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.constants.UploadConstants;
 import com.site.blog.dto.Result;
+import com.site.blog.entity.BlogConfig;
+import com.site.blog.service.BlogConfigService;
 import com.site.blog.util.MyBlogUtils;
 import com.site.blog.util.ResultGenerator;
 import com.site.blog.util.UploadFileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +31,9 @@ import java.net.URISyntaxException;
 @RequestMapping("/admin")
 public class UploadController {
 
+    @Autowired
+    private BlogConfigService blogConfigService;
+
     /**
      * @Description: 用户头像上传
      * @Param: [httpServletRequest, file]
@@ -35,7 +42,7 @@ public class UploadController {
      */
     @PostMapping({"/upload/authorImg"})
     @ResponseBody
-    public Result upload(HttpServletRequest httpServletRequest, @RequestParam("file") MultipartFile file) throws URISyntaxException {
+    public Result upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws URISyntaxException {
         String suffixName = UploadFileUtils.getSuffixName(file);
         //生成文件名称通用方法
         String newFileName = UploadFileUtils.getNewFileName(suffixName);
@@ -49,10 +56,13 @@ public class UploadController {
                 }
             }
             file.transferTo(destFile);
-            Result resultSuccess = ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
-            resultSuccess.setData(MyBlogUtils.getHost(new URI(httpServletRequest.getRequestURL() + ""))
-                    + UploadConstants.SQL_AUTHOR_IMG + newFileName);
-            return resultSuccess;
+            String sysAuthorImg = MyBlogUtils.getHost(new URI(request.getRequestURL() + ""))
+                    + UploadConstants.SQL_AUTHOR_IMG + newFileName;
+            BlogConfig blogConfig = new BlogConfig()
+                    .setConfigField(SysConfigConstants.SYS_AUTHOR_IMG.getConfigField())
+                    .setConfigValue(sysAuthorImg);
+            blogConfigService.updateById(blogConfig);
+            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
         } catch (IOException e) {
             e.printStackTrace();
             return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);

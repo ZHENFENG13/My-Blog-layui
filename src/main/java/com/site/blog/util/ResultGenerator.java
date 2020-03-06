@@ -53,7 +53,6 @@ public class ResultGenerator {
     /**
      * @Description: 根据传入的常量和data数据返回对应result
      * @Param: [constants] http状态
-     * @return: com.zhulin.blog.dto.Result
      * @date: 2019/8/24 16:25
      */
     public static Result getResultByHttp(HttpStatusConstants constants,Object data){
@@ -65,11 +64,12 @@ public class ResultGenerator {
     /**
      * @Description: 根据传入的常量返回对应result
      * @Param: [constants] http状态
-     * @return: com.zhulin.blog.dto.Result
      * @date: 2019/8/24 16:25
      */
-    public static Result getResultByHttp(HttpStatusConstants constants){
-        Result result = ResultGenerator.genErrorResult(constants.getStatus(), constants.getContent());
+    public static Result<String> getResultByHttp(HttpStatusConstants constants) {
+        Result<String> result = new Result();
+        result.setResultCode(constants.getStatus());
+        result.setMessage(constants.getContent());
         return result;
     }
 }

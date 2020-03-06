@@ -40,7 +40,6 @@
                 <div class="layui-inline">
                     <button type="button" class="layui-btn" id="previewImg">预览图片</button>
                     <button type="button" class="layui-btn" id="uploadImg">开始上传</button>
-                    <input name="sysAuthorImg" type="hidden" id="authorImgUrl" th:value="${session.authorImg.configValue}">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -107,7 +106,6 @@
             }
             , done: function (res) {
                 if (res.resultCode == 200) {
-                    $("#authorImgUrl").val(res.data);
                     return layer.msg('上传成功');
                 } else {
                     return layer.msg('上传失败');

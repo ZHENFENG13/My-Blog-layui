@@ -28,9 +28,6 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     @Autowired
     private AdminUserMapper adminUserMappe;
 
-    @Autowired
-    private BlogConfigMapper blogConfigMapper;
-
     /**
      * @Description: 验证密码
      * @Param: [userId, oldPwd]
@@ -49,11 +46,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
 
     @Transactional
     @Override
-    public boolean updateUserInfo(AdminUser adminUser, BlogConfig blogConfig) {
-        if (SqlHelper.retBool(adminUserMappe.updateById(adminUser))
-                && SqlHelper.retBool(blogConfigMapper.updateById(blogConfig))) {
-            return true;
-        }
-        return false;
+    public boolean updateUserInfo(AdminUser adminUser) {
+        return SqlHelper.retBool(adminUserMappe.updateById(adminUser));
     }
 }

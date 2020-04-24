@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
@@ -49,14 +49,14 @@ public class CategoryController {
      */
     @ResponseBody
     @GetMapping("/v1/category/list")
-    public Result<BlogCategory> categoryList(){
+    public Result<List<BlogCategory>> categoryList(){
         QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<BlogCategory>();
         queryWrapper.lambda().eq(BlogCategory::getIsDeleted, BlogStatusConstants.ZERO);
         List<BlogCategory> list = blogCategoryService.list(queryWrapper);
         if (CollectionUtils.isEmpty(list)){
-            ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,list);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,list);
     }
 
     @GetMapping("/v1/category")
@@ -94,7 +94,7 @@ public class CategoryController {
      */
     @ResponseBody
     @PostMapping("/v1/category/update")
-    public Result updateCategory(BlogCategory blogCategory){
+    public Result<String> updateCategory(BlogCategory blogCategory){
         BlogCategory sqlCategory = blogCategoryService.getById(blogCategory.getCategoryId());
         boolean flag = sqlCategory.getCategoryName().equals(blogCategory.getCategoryName());
         if (flag){
@@ -108,7 +108,7 @@ public class CategoryController {
             blogInfoService.update(blogInfo,updateWrapper);
             blogCategoryService.updateById(blogCategory);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
     }
 
     /**
@@ -119,12 +119,12 @@ public class CategoryController {
      */
     @ResponseBody
     @PostMapping("/v1/category/isDel")
-    public Result updateCategoryStatus(BlogCategory blogCategory){
+    public Result<String> updateCategoryStatus(BlogCategory blogCategory){
         boolean flag = blogCategoryService.updateById(blogCategory);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -135,7 +135,7 @@ public class CategoryController {
      */
     @ResponseBody
     @PostMapping("/v1/category/clear")
-    public Result clearCategory(BlogCategory blogCategory){
+    public Result<String> clearCategory(BlogCategory blogCategory){
         UpdateWrapper<BlogInfo> updateWrapper = new UpdateWrapper();
         updateWrapper.lambda()
                 .eq(BlogInfo::getBlogCategoryId,blogCategory.getCategoryId())
@@ -144,9 +144,9 @@ public class CategoryController {
         boolean flag = blogInfoService.update(updateWrapper);
                 flag = blogCategoryService.removeById(blogCategory.getCategoryId());
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/v1/category/add")
@@ -162,13 +162,13 @@ public class CategoryController {
      */
     @ResponseBody
     @PostMapping("/v1/category/add")
-    public Result addCategory(BlogCategory blogCategory){
+    public Result<String> addCategory(BlogCategory blogCategory){
         blogCategory.setCreateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogCategoryService.save(blogCategory);
         if (flag) {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
 

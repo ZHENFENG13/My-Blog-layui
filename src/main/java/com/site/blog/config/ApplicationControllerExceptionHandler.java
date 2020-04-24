@@ -1,6 +1,6 @@
 package com.site.blog.config;
 
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.dto.Result;
 import com.site.blog.util.ResultGenerator;
 import org.springframework.validation.BindException;
@@ -30,8 +30,8 @@ public class ApplicationControllerExceptionHandler {
      */
     @ExceptionHandler(value = BindException.class)
     @ResponseBody
-    public Result BindException(BindException e) {
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
+    public Result<String> BindException(BindException e) {
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
 
@@ -43,14 +43,14 @@ public class ApplicationControllerExceptionHandler {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseBody
-    public Result handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
+    public Result<String> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST, Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public Result handlerError(HttpServletRequest req, Exception e) {
-        return ResultGenerator.genFailResult("出现异常错误,请及时查看后台日志！");
+    public Result<String> handlerError(HttpServletRequest req, Exception e) {
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR,"出现异常错误,请及时查看后台日志！");
     }
 
 

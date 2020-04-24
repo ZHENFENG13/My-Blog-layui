@@ -4,7 +4,7 @@ package com.site.blog.controller.blog;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.LinkConstants;
 import com.site.blog.controller.vo.BlogDetailVO;
 import com.site.blog.dto.AjaxPutPage;
@@ -12,7 +12,6 @@ import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
 import com.site.blog.entity.*;
 import com.site.blog.service.*;
-import com.site.blog.util.MarkDownUtils;
 import com.site.blog.util.PageResult;
 import com.site.blog.util.ResultGenerator;
 import org.springframework.beans.BeanUtils;
@@ -321,17 +320,17 @@ public class MyBlogController {
      */
     @PostMapping(value = "/blog/comment")
     @ResponseBody
-    public Result comment(HttpServletRequest request,
+    public Result<String> comment(HttpServletRequest request,
                           @Validated BlogComment blogComment) {
         String ref = request.getHeader("Referer");
         if (StringUtils.isEmpty(ref)) {
-            return ResultGenerator.genFailResult("非法请求");
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR,"非法请求");
         }
         boolean flag = blogCommentService.save(blogComment);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
 }

@@ -3,25 +3,20 @@ package com.site.blog.controller.admin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.UploadConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
-import com.site.blog.entity.BlogComment;
 import com.site.blog.entity.BlogInfo;
-import com.site.blog.entity.BlogTag;
 import com.site.blog.entity.BlogTagRelation;
 import com.site.blog.service.BlogCommentService;
 import com.site.blog.service.BlogInfoService;
 import com.site.blog.service.BlogTagRelationService;
-import com.site.blog.service.BlogTagService;
 import com.site.blog.util.DateUtils;
 import com.site.blog.util.MyBlogUtils;
 import com.site.blog.util.ResultGenerator;
 import com.site.blog.util.UploadFileUtils;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -105,8 +100,7 @@ public class BlogController {
     @ResponseBody
     @PostMapping("/v1/blog/uploadFile")
     public Map<String,Object> uploadFileByEditormd(HttpServletRequest request,
-                                     @RequestParam(name = "editormd-image-file", required = true)
-                                             MultipartFile file) throws URISyntaxException {
+                                     @RequestParam(name = "editormd-image-file") MultipartFile file) throws URISyntaxException {
         String suffixName = UploadFileUtils.getSuffixName(file);
         //生成文件名称通用方法
         String newFileName = UploadFileUtils.getNewFileName(suffixName);
@@ -121,13 +115,10 @@ public class BlogController {
                 }
             }
             file.transferTo(destFile);
-            String fileUrl = MyBlogUtils.getHost(new URI(request.getRequestURL() + "")) +
-                    UploadConstants.FILE_SQL_DIC + newFileName;
+            String fileUrl = UploadConstants.FILE_SQL_DIC + newFileName;
             result.put("success", 1);
             result.put("message","上传成功");
             result.put("url",fileUrl);
-        } catch (UnsupportedEncodingException e) {
-            result.put("success", 0);
         } catch (IOException e) {
             result.put("success", 0);
         }
@@ -143,17 +134,17 @@ public class BlogController {
      */
     @ResponseBody
     @PostMapping("/v1/blog/edit")
-    public Result saveBlog(@RequestParam("blogTagIds[]") List<Integer> blogTagIds, BlogInfo blogInfo){
+    public Result<String> saveBlog(@RequestParam("blogTagIds[]") List<Integer> blogTagIds, BlogInfo blogInfo){
         if (CollectionUtils.isEmpty(blogTagIds) || ObjectUtils.isEmpty(blogInfo)){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST);
         }
         blogInfo.setCreateTime(DateUtils.getLocalCurrentDate());
         blogInfo.setUpdateTime(DateUtils.getLocalCurrentDate());
         if (blogInfoService.saveOrUpdate(blogInfo)){
             blogTagRelationService.removeAndsaveBatch(blogTagIds,blogInfo);
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -184,13 +175,13 @@ public class BlogController {
      */
     @ResponseBody
     @PostMapping("/v1/blog/blogStatus")
-    public Result updateBlogStatus(BlogInfo blogInfo){
+    public Result<String> updateBlogStatus(BlogInfo blogInfo){
         blogInfo.setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogInfoService.updateById(blogInfo);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -201,16 +192,16 @@ public class BlogController {
      */
     @ResponseBody
     @PostMapping("/v1/blog/delete")
-    public Result deleteBlog(@RequestParam Long blogId){
+    public Result<String> deleteBlog(@RequestParam Long blogId){
         BlogInfo blogInfo = new BlogInfo()
                 .setBlogId(blogId)
                 .setIsDeleted(BlogStatusConstants.ONE)
                 .setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogInfoService.updateById(blogInfo);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -221,11 +212,11 @@ public class BlogController {
      */
     @ResponseBody
     @PostMapping("/v1/blog/clear")
-    public Result clearBlog(@RequestParam Long blogId){
+    public Result<String> clearBlog(@RequestParam Long blogId){
         if (blogInfoService.clearBlogInfo(blogId)){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -236,16 +227,16 @@ public class BlogController {
      */
     @ResponseBody
     @PostMapping("/v1/blog/restore")
-    public Result restoreBlog(@RequestParam Long blogId){
+    public Result<String> restoreBlog(@RequestParam Long blogId){
         BlogInfo blogInfo = new BlogInfo()
                 .setBlogId(blogId)
                 .setIsDeleted(BlogStatusConstants.ZERO)
                 .setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogInfoService.updateById(blogInfo);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseBody

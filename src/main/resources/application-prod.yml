@@ -68,3 +68,8 @@ mybatis-plus:
 logging:
   level.com.site.blog: debug
 
+upload:
+  uploadAuthorImg: "/tmp/myblog/authorImg/"
+  fileUploadDic: "/tmp/myblog/"
+  sqlAuthorImg: "/authorImg/"
+  fileSqlDic: "/upload/"

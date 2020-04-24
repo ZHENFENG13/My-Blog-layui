@@ -2,7 +2,7 @@ package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.LinkConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
@@ -11,7 +11,6 @@ import com.site.blog.entity.BlogLink;
 import com.site.blog.service.BlogLinkService;
 import com.site.blog.util.DateUtils;
 import com.site.blog.util.ResultGenerator;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +40,7 @@ public class LinkController {
 
     @ResponseBody
     @GetMapping("/v1/linkType/list")
-    public Result linkTypeList(){
+    public Result<List<BlogLink>> linkTypeList(){
         List<BlogLink> links = new ArrayList<>();
         links.add(new BlogLink().setLinkType(LinkConstants.LINK_TYPE_FRIENDSHIP.getLinkTypeId())
                 .setLinkName(LinkConstants.LINK_TYPE_FRIENDSHIP.getLinkTypeName()));
@@ -49,7 +48,7 @@ public class LinkController {
                 .setLinkName(LinkConstants.LINK_TYPE_RECOMMEND.getLinkTypeName()));
         links.add(new BlogLink().setLinkType(LinkConstants.LINK_TYPE_PRIVATE.getLinkTypeId())
                 .setLinkName(LinkConstants.LINK_TYPE_PRIVATE.getLinkTypeName()));
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,links);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,links);
     }
 
     @ResponseBody
@@ -68,22 +67,22 @@ public class LinkController {
 
     @ResponseBody
     @PostMapping("/v1/link/isDel")
-    public Result updateLinkStatus(BlogLink blogLink){
+    public Result<String> updateLinkStatus(BlogLink blogLink){
         boolean flag = blogLinkService.updateById(blogLink);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     @ResponseBody
     @PostMapping("/v1/link/clear")
-    public Result clearLink(Integer linkId){
+    public Result<String> clearLink(Integer linkId){
         boolean flag = blogLinkService.removeById(linkId);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/v1/link/edit")
@@ -97,7 +96,7 @@ public class LinkController {
 
     @ResponseBody
     @PostMapping("/v1/link/edit")
-    public Result updateAndSaveLink(BlogLink blogLink){
+    public Result<String> updateAndSaveLink(BlogLink blogLink){
         blogLink.setCreateTime(DateUtils.getLocalCurrentDate());
         boolean flag;
         if (blogLink.getLinkId() != null){
@@ -106,8 +105,8 @@ public class LinkController {
             flag = blogLinkService.save(blogLink);
         }
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 }

@@ -7,7 +7,7 @@ package com.site.blog.constants;
  * @author: 南街
  * @create: 2019-08-15 09:11
  **/
-public enum  HttpStatusConstants {
+public enum HttpStatusEnum {
 
     OK(200,"成功"),
     BAD_REQUEST(400,"请求参数有误"),
@@ -18,7 +18,7 @@ public enum  HttpStatusConstants {
     private final int status;
     private final String content;
 
-    HttpStatusConstants(int status, String content) {
+    HttpStatusEnum(int status, String content) {
         this.status = status;
         this.content = content;
     }

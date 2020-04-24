@@ -1,6 +1,6 @@
 package com.site.blog.controller.admin;
 
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
 import com.site.blog.entity.BlogConfig;
@@ -64,13 +64,13 @@ public class ConfigController {
      */
     @ResponseBody
     @PostMapping("/v1/blogConfig/edit")
-    public Result updateBlogConfig(BlogConfig blogConfig){
+    public Result<String> updateBlogConfig(BlogConfig blogConfig){
         blogConfig.setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogConfigService.updateById(blogConfig);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }else{
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -88,14 +88,14 @@ public class ConfigController {
      */
     @ResponseBody
     @PostMapping("/v1/blogConfig/add")
-    public Result addBlogConfig(BlogConfig blogConfig){
+    public Result<String> addBlogConfig(BlogConfig blogConfig){
         blogConfig.setCreateTime(DateUtils.getLocalCurrentDate());
         blogConfig.setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogConfigService.save(blogConfig);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }else{
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -107,12 +107,12 @@ public class ConfigController {
      */
     @ResponseBody
     @PostMapping("/v1/blogConfig/del")
-    public Result delBlogConfig(@RequestParam String configField){
+    public Result<String> delBlogConfig(@RequestParam String configField){
         boolean flag = blogConfigService.removeById(configField);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }else{
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -157,7 +157,8 @@
 
                             var body = (uploadIframe.contentWindow ? uploadIframe.contentWindow : uploadIframe.contentDocument).document.body;
                             var json = (body.innerText) ? body.innerText : ( (body.textContent) ? body.textContent : null);
-
+                            // 解决谷歌浏览器79.0.3945.130版本下图片上传无法url没有自动填充的问题
+                            json = json.replace("Tree Chart JSON Input Copy pathCopy Value","");
                             json = (typeof JSON.parse !== "undefined") ? JSON.parse(json) : eval("(" + json + ")");
 
                             if(!settings.crossDomainUpload)

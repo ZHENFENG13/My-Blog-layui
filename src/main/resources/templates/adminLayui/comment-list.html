@@ -181,16 +181,15 @@
         });
 
         //监听工具条
-        table.on('tool(blogLinkList)', function(obj){
+        table.on('tool(blogCommentList)', function(obj){
             var data = obj.data, //获得当前行数据
                 layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
-
             switch (layEvent) {
                 case 'clear':
-                    layer.confirm('确定清除？',{icon:3, title:'提示信息'},function(index){
-                        $.post("/admin/v1/link/clear",
+                    layer.confirm('确定从数据库中清除？',{icon:3, title:'提示信息'},function(index){
+                        $.post("/admin/v1/comment/delete",
                             {
-                                "linkId": data.linkId
+                                "commentId": data.commentId
                             }, function (s) {
                                 layer.msg(s.message);
                             });

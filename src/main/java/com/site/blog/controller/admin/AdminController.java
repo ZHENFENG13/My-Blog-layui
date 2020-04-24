@@ -1,24 +1,24 @@
 package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusConstants;
-import com.site.blog.constants.SessionConstants;
-import com.site.blog.constants.SysConfigConstants;
+import com.site.blog.constants.*;
 import com.site.blog.dto.Result;
 import com.site.blog.entity.*;
 import com.site.blog.service.*;
 import com.site.blog.util.MD5Utils;
 import com.site.blog.util.ResultGenerator;
+import com.site.blog.util.UploadFileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * @qq交流群 796794009
@@ -99,10 +99,10 @@ public class AdminController {
      */
     @ResponseBody
     @PostMapping(value = "/v1/login")
-    public Result login(String username, String password,
+    public Result<String> login(String username, String password,
                         HttpSession session) {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST);
         }
         QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<AdminUser>(
                 new AdminUser().setLoginUserName(username)
@@ -115,9 +115,9 @@ public class AdminController {
             session.setAttribute(SessionConstants.LOGIN_USER_NAME, adminUser.getLoginUserName());
             session.setAttribute(SessionConstants.AUTHOR_IMG, blogConfigService.getById(
                     SysConfigConstants.SYS_AUTHOR_IMG.getConfigField()));
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,"/admin/v1/index");
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,"/admin/v1/index");
         } else {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.UNAUTHORIZED);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.UNAUTHORIZED);
         }
     }
 
@@ -129,13 +129,13 @@ public class AdminController {
      */
     @ResponseBody
     @GetMapping("/v1/password")
-    public Result validatePassword(String oldPwd,HttpSession session){
+    public Result<String> validatePassword(String oldPwd,HttpSession session){
         Integer userId = (Integer) session.getAttribute(SessionConstants.LOGIN_USER_ID);
         boolean flag = adminUserService.validatePassword(userId,oldPwd);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST);
     }
 
     /**
@@ -178,10 +178,10 @@ public class AdminController {
      */
     @ResponseBody
     @PostMapping("/v1/userInfo")
-    public Result userInfoUpdate(HttpSession session,String userName, String newPwd,
+    public Result<String> userInfoUpdate(HttpSession session,String userName, String newPwd,
                                  String nickName) {
         if (StringUtils.isEmpty(newPwd) || StringUtils.isEmpty(nickName)) {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.BAD_REQUEST);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST);
         }
         Integer loginUserId = (int) session.getAttribute(SessionConstants.LOGIN_USER_ID);
         AdminUser adminUser = new AdminUser()
@@ -191,9 +191,9 @@ public class AdminController {
                 .setLoginPassword(MD5Utils.MD5Encode(newPwd, "UTF-8"));
         if (adminUserService.updateUserInfo(adminUser)) {
             //修改成功后清空session中的数据，前端控制跳转至登录页
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,"/admin/v1/logout");
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,"/admin/v1/logout");
         } else {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -202,5 +202,39 @@ public class AdminController {
     public boolean reload(HttpSession session){
         Integer userId = (Integer) session.getAttribute(SessionConstants.LOGIN_USER_ID);
         return userId != null && userId != 0;
+    }
+
+    /**
+     * @Description: 用户头像上传
+     * @Param: [httpServletRequest, file]
+     * @return: com.zhulin.blog.util.Result
+     * @date: 2019/8/24 15:15
+     */
+    @PostMapping({"/upload/authorImg"})
+    @ResponseBody
+    public Result<String> upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) throws URISyntaxException {
+        String suffixName = UploadFileUtils.getSuffixName(file);
+        //生成文件名称通用方法
+        String newFileName = UploadFileUtils.getNewFileName(suffixName);
+        File fileDirectory = new File(UploadConstants.UPLOAD_AUTHOR_IMG);
+        //创建文件
+        File destFile = new File(UploadConstants.UPLOAD_AUTHOR_IMG + newFileName);
+        try {
+            if (!fileDirectory.exists()) {
+                if (!fileDirectory.mkdirs()) {
+                    throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
+                }
+            }
+            file.transferTo(destFile);
+            String sysAuthorImg = UploadConstants.SQL_AUTHOR_IMG + newFileName;
+            BlogConfig blogConfig = new BlogConfig()
+                    .setConfigField(SysConfigConstants.SYS_AUTHOR_IMG.getConfigField())
+                    .setConfigValue(sysAuthorImg);
+            blogConfigService.updateById(blogConfig);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
+        }
     }
 }

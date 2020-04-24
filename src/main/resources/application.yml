@@ -65,6 +65,13 @@ mybatis-plus:
   global-config:
     db-config:
       table-prefix: "tb_"
+
 logging:
   level.com.site.blog: debug
+
+upload:
+  uploadAuthorImg: "D:/tmp/myblog/authorImg/"
+  fileUploadDic: "D:/tmp/myblog/upload/"
+  sqlAuthorImg: "/authorImg/"
+  fileSqlDic: "/upload/"
 

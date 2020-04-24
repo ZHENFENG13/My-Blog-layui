@@ -3,7 +3,7 @@ package com.site.blog.controller.admin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusConstants;
+import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
@@ -55,14 +55,14 @@ public class TagController {
      */
     @ResponseBody
     @GetMapping("/v1/tags/list")
-    public Result<BlogTag> tagsList(){
+    public Result<List<BlogTag>> tagsList(){
         QueryWrapper<BlogTag> queryWrapper = new QueryWrapper<BlogTag>();
         queryWrapper.lambda().eq(BlogTag::getIsDeleted, BlogStatusConstants.ZERO);
         List<BlogTag> list = blogTagService.list(queryWrapper);
         if (CollectionUtils.isEmpty(list)){
-            ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.OK,list);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,list);
     }
 
     /**
@@ -94,12 +94,12 @@ public class TagController {
      */
     @ResponseBody
     @PostMapping("/v1/tags/isDel")
-    public Result updateCategoryStatus(BlogTag blogTag){
+    public Result<String> updateCategoryStatus(BlogTag blogTag){
         boolean flag = blogTagService.updateById(blogTag);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
     
     /**
@@ -110,13 +110,13 @@ public class TagController {
      */
     @ResponseBody
     @PostMapping("/v1/tags/add")
-    public Result addTag(BlogTag blogTag){
+    public Result<String> addTag(BlogTag blogTag){
         blogTag.setCreateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogTagService.save(blogTag);
         if (flag){
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }else {
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.INTERNAL_SERVER_ERROR);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -128,7 +128,7 @@ public class TagController {
      */
     @ResponseBody
     @PostMapping("/v1/tags/clear")
-    public Result clearTag(Integer tagId) throws RuntimeException{
+    public Result<String> clearTag(Integer tagId) throws RuntimeException{
         QueryWrapper<BlogTagRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(BlogTagRelation::getTagId,tagId);
         List<BlogTagRelation> tagRelationList = blogTagRelationService.list(queryWrapper);
@@ -150,6 +150,6 @@ public class TagController {
                     .in(BlogTagRelation::getBlogId,blogIds));
             blogTagRelationService.saveBatch(tagRelations);
             blogTagService.removeById(tagId);
-            return ResultGenerator.getResultByHttp(HttpStatusConstants.OK);
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
     }
 }

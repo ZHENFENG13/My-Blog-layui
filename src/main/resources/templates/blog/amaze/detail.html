@@ -9,7 +9,7 @@
     <link rel="shortcut icon" th:href="@{${configurations.get('websiteIcon')}}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/X-admin/lib/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/blog/amaze/css/base.css}">
-    <link rel="stylesheet" th:href="@{/X-admin/editormd/css/editormd.preview.css}" />
+    <link rel="stylesheet" th:href="@{/X-admin/editormd/css/editormd.preview.css}"/>
     <style>
         pre code {
             white-space: pre;
@@ -21,6 +21,14 @@
             color: #777;
             background-color: rgba(66, 185, 131, .1);
             max-width: 890px;
+        }
+
+        .editormd-html-preview ul > li {
+            list-style: disc;!important;
+        }
+
+        .editormd-html-preview ol > li {
+            list-style: decimal;!important;
         }
     </style>
 
@@ -58,7 +66,7 @@
     <div class="am-g am-g-fixed blog-fixed">
         <div class="am-u-lg-12 am-u-sm-12">
             <article id="test-markdown-view">
-<!--                <textarea th:utext="${blogDetailVO.blogContent}"/>-->
+                <!--                <textarea th:utext="${blogDetailVO.blogContent}"/>-->
             </article>
             <aside class="blog-rights clearfix">
                 <p>本站文章除注明转载/出处外，皆为作者原创，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</p>
@@ -140,13 +148,13 @@
         initBlogList(1, 5, [[${blogDetailVO.blogId}]]);
 
         testEditormdView = editormd.markdownToHTML("test-markdown-view", {
-            htmlDecode      : "style,script,iframe",
-            emoji           : true,
-            taskList        : true,
-            tex             : true,
-            flowChart       : true,
-            sequenceDiagram : true,
-            markdown        : [[${blogDetailVO.blogContent}]]
+            htmlDecode: "style,script,iframe",
+            emoji: true,
+            taskList: true,
+            tex: true,
+            flowChart: true,
+            sequenceDiagram: true,
+            markdown: [[${blogDetailVO.blogContent}]]
         });
 
         // 初始化评论列表

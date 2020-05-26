@@ -43,29 +43,31 @@ public class CategoryController {
 
     /**
      * 分类的集合数据[用于下拉框]
+     *
      * @param
      * @return com.site.blog.dto.Result<com.site.blog.entity.BlogCategory>
      * @date 2019/8/30 14:38
      */
     @ResponseBody
     @GetMapping("/v1/category/list")
-    public Result<List<BlogCategory>> categoryList(){
+    public Result<List<BlogCategory>> categoryList() {
         QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<BlogCategory>();
         queryWrapper.lambda().eq(BlogCategory::getIsDeleted, BlogStatusConstants.ZERO);
         List<BlogCategory> list = blogCategoryService.list(queryWrapper);
-        if (CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)) {
             ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
-        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK,list);
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK, list);
     }
 
     @GetMapping("/v1/category")
-    public String gotoBlogCategory(){
+    public String gotoBlogCategory() {
         return "adminLayui/category-list";
     }
 
     /**
      * 分类的分页
+     *
      * @param ajaxPutPage
      * @param condition
      * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogCategory>
@@ -73,13 +75,13 @@ public class CategoryController {
      */
     @ResponseBody
     @GetMapping("/v1/category/paging")
-    public AjaxResultPage<BlogCategory> getCategoryList(AjaxPutPage<BlogCategory> ajaxPutPage, BlogCategory condition){
+    public AjaxResultPage<BlogCategory> getCategoryList(AjaxPutPage<BlogCategory> ajaxPutPage, BlogCategory condition) {
         QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<>(condition);
         queryWrapper.lambda()
                 .orderByAsc(BlogCategory::getCategoryRank)
-                .ne(BlogCategory::getCategoryId,1);
+                .ne(BlogCategory::getCategoryId, 1);
         Page<BlogCategory> page = ajaxPutPage.putPageToPage();
-        blogCategoryService.page(page,queryWrapper);
+        blogCategoryService.page(page, queryWrapper);
         AjaxResultPage<BlogCategory> result = new AjaxResultPage<>();
         result.setData(page.getRecords());
         result.setCount(page.getTotal());
@@ -88,24 +90,25 @@ public class CategoryController {
 
     /**
      * 修改分类信息
+     *
      * @param blogCategory
      * @return com.site.blog.dto.Result
      * @date 2019/8/30 14:55
      */
     @ResponseBody
     @PostMapping("/v1/category/update")
-    public Result<String> updateCategory(BlogCategory blogCategory){
+    public Result<String> updateCategory(BlogCategory blogCategory) {
         BlogCategory sqlCategory = blogCategoryService.getById(blogCategory.getCategoryId());
         boolean flag = sqlCategory.getCategoryName().equals(blogCategory.getCategoryName());
-        if (flag){
+        if (flag) {
             blogCategoryService.updateById(blogCategory);
-        }else{
+        } else {
             BlogInfo blogInfo = new BlogInfo()
                     .setBlogCategoryId(blogCategory.getCategoryId())
                     .setBlogCategoryName(blogCategory.getCategoryName());
             UpdateWrapper<BlogInfo> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.lambda().eq(BlogInfo::getBlogCategoryId,blogCategory.getCategoryId());
-            blogInfoService.update(blogInfo,updateWrapper);
+            updateWrapper.lambda().eq(BlogInfo::getBlogCategoryId, blogCategory.getCategoryId());
+            blogInfoService.update(blogInfo, updateWrapper);
             blogCategoryService.updateById(blogCategory);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
@@ -113,15 +116,16 @@ public class CategoryController {
 
     /**
      * 修改分类状态
+     *
      * @param blogCategory
      * @return com.site.blog.dto.Result
      * @date 2019/8/30 14:55
      */
     @ResponseBody
     @PostMapping("/v1/category/isDel")
-    public Result<String> updateCategoryStatus(BlogCategory blogCategory){
+    public Result<String> updateCategoryStatus(BlogCategory blogCategory) {
         boolean flag = blogCategoryService.updateById(blogCategory);
-        if (flag){
+        if (flag) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -129,40 +133,42 @@ public class CategoryController {
 
     /**
      * 清除分类信息
+     *
      * @param blogCategory
      * @return com.site.blog.dto.Result
      * @date 2019/9/1 15:48
      */
     @ResponseBody
     @PostMapping("/v1/category/clear")
-    public Result<String> clearCategory(BlogCategory blogCategory){
+    public Result<String> clearCategory(BlogCategory blogCategory) {
         UpdateWrapper<BlogInfo> updateWrapper = new UpdateWrapper();
         updateWrapper.lambda()
-                .eq(BlogInfo::getBlogCategoryId,blogCategory.getCategoryId())
+                .eq(BlogInfo::getBlogCategoryId, blogCategory.getCategoryId())
                 .set(BlogInfo::getBlogCategoryId, SysConfigConstants.DEFAULT_CATEGORY.getConfigField())
                 .set(BlogInfo::getBlogCategoryName, SysConfigConstants.DEFAULT_CATEGORY.getConfigName());
-        boolean flag = blogInfoService.update(updateWrapper);
-                flag = blogCategoryService.removeById(blogCategory.getCategoryId());
-        if (flag){
+        boolean flag = blogInfoService.update(updateWrapper)
+                && blogCategoryService.removeById(blogCategory.getCategoryId());
+        if (flag) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/v1/category/add")
-    public String addBlogConfig(){
+    public String addBlogConfig() {
         return "adminLayui/category-add";
     }
 
     /**
      * 新增分类信息
+     *
      * @param blogCategory
      * @return com.site.blog.dto.Result
      * @date 2019/9/1 15:48
      */
     @ResponseBody
     @PostMapping("/v1/category/add")
-    public Result<String> addCategory(BlogCategory blogCategory){
+    public Result<String> addCategory(BlogCategory blogCategory) {
         blogCategory.setCreateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogCategoryService.save(blogCategory);
         if (flag) {

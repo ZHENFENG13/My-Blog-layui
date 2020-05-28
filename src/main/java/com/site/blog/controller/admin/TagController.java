@@ -129,27 +129,9 @@ public class TagController {
     @ResponseBody
     @PostMapping("/v1/tags/clear")
     public Result<String> clearTag(Integer tagId) throws RuntimeException{
-        QueryWrapper<BlogTagRelation> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(BlogTagRelation::getTagId,tagId);
-        List<BlogTagRelation> tagRelationList = blogTagRelationService.list(queryWrapper);
-        // 批量更新的BlogInfo信息
-        List<BlogInfo> infoList = tagRelationList.stream()
-                .map(tagRelation -> new BlogInfo()
-                        .setBlogId(tagRelation.getBlogId())
-                        .setBlogTags(SysConfigConstants.DEFAULT_TAG.getConfigName())).collect(Collectors.toList());
-        List<Long> blogIds = infoList.stream().map(BlogInfo::getBlogId).collect(Collectors.toList());
-        // 批量更新的tagRelation信息
-        List<BlogTagRelation> tagRelations = tagRelationList.stream()
-                .map(tagRelation -> new BlogTagRelation()
-                        .setBlogId(tagRelation.getBlogId())
-                        .setTagId(Integer.valueOf(SysConfigConstants.DEFAULT_CATEGORY.getConfigField())))
-                .collect(Collectors.toList());
-            blogInfoService.updateBatchById(infoList);
-            blogTagRelationService.remove(new QueryWrapper<BlogTagRelation>()
-                    .lambda()
-                    .in(BlogTagRelation::getBlogId,blogIds));
-            blogTagRelationService.saveBatch(tagRelations);
-            blogTagService.removeById(tagId);
+        if (blogTagService.clearTag(tagId)) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
+        }
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 }

@@ -18,4 +18,6 @@ public interface BlogTagService extends IService<BlogTag> {
 
     List<BlogTagCount> getBlogTagCountForIndex();
 
+    boolean clearTag(Integer tagId);
+
 }

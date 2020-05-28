@@ -1,7 +1,9 @@
 package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
 import com.site.blog.constants.HttpStatusEnum;
@@ -141,14 +143,7 @@ public class CategoryController {
     @ResponseBody
     @PostMapping("/v1/category/clear")
     public Result<String> clearCategory(BlogCategory blogCategory) {
-        UpdateWrapper<BlogInfo> updateWrapper = new UpdateWrapper();
-        updateWrapper.lambda()
-                .eq(BlogInfo::getBlogCategoryId, blogCategory.getCategoryId())
-                .set(BlogInfo::getBlogCategoryId, SysConfigConstants.DEFAULT_CATEGORY.getConfigField())
-                .set(BlogInfo::getBlogCategoryName, SysConfigConstants.DEFAULT_CATEGORY.getConfigName());
-        boolean flag = blogInfoService.update(updateWrapper)
-                && blogCategoryService.removeById(blogCategory.getCategoryId());
-        if (flag) {
+        if (blogCategoryService.clearCategory(blogCategory)) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);

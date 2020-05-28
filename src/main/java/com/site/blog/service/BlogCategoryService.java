@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface BlogCategoryService extends IService<BlogCategory> {
 
+    public boolean clearCategory(BlogCategory blogCategory);
+
 }

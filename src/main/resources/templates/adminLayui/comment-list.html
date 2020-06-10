@@ -109,12 +109,14 @@
                 {type: 'checkbox'},
                 {field: 'commentator', title: '评论者名称', align: "center", unresize: "true"},
                 {field: 'email', title: '评论者邮箱', align: 'center', unresize: "true"},
-                {field: 'commentBody', title: '评论内容', align: 'center', unresize: "true"},
+                {
+                    field: 'commentBody', title: '评论内容', align: 'center', unresize: "true"
+                },
                 {field: 'commentCreateTime', title: '评论提交时间', align: 'center', unresize: "true"},
-                {field: 'replyBody', title: '回复内容', align: 'center', unresize: "true",edit:"text"},
+                {field: 'replyBody', title: '回复内容', align: 'center', unresize: "true", edit: "text"},
                 {field: 'replyCreateTime', title: '回复时间', align: 'center', unresize: "true"},
-                {field: 'commentStatus', title: '审核', align: 'center', unresize: "true",templet: '#isStatusTool'},
-                {field: 'isDeleted', title: '当前状态', align: 'center', unresize: "true",templet: '#isDeletedTool'},
+                {field: 'commentStatus', title: '审核', align: 'center', unresize: "true", templet: '#isStatusTool'},
+                {field: 'isDeleted', title: '当前状态', align: 'center', unresize: "true", templet: '#isDeletedTool'},
                 {title: '操作', align: "center", unresize: "true", toolbar: "#blogListBar"}
             ]]
         });
@@ -122,8 +124,8 @@
         //搜索
         form.on('submit(search_btn)', function (data) {
             var datas = data.field;
-            for (var property in datas){
-                if (datas[property] === ""){
+            for (var property in datas) {
+                if (datas[property] === "") {
                     delete datas[property];
                 }
             }
@@ -136,13 +138,13 @@
             return false;
         });
 
-        table.on('edit(blogCommentList)', function(obj){
+        table.on('edit(blogCommentList)', function (obj) {
             var value = obj.value //得到修改后的值
-                ,data = obj.data //得到所在行所有键值
-                ,field = obj.field; //得到字段
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
             delete data['commentCreateTime'];
             delete data['replyCreateTime'];
-            $.post("/admin/v1/comment/edit",data, function (s) {
+            $.post("/admin/v1/comment/edit", data, function (s) {
                 layer.msg(s.message);
                 tableIns.reload();
             });
@@ -181,12 +183,12 @@
         });
 
         //监听工具条
-        table.on('tool(blogCommentList)', function(obj){
+        table.on('tool(blogCommentList)', function (obj) {
             var data = obj.data, //获得当前行数据
                 layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             switch (layEvent) {
                 case 'clear':
-                    layer.confirm('确定从数据库中清除？',{icon:3, title:'提示信息'},function(index){
+                    layer.confirm('确定从数据库中清除？', {icon: 3, title: '提示信息'}, function (index) {
                         $.post("/admin/v1/comment/delete",
                             {
                                 "commentId": data.commentId
@@ -201,11 +203,11 @@
         });
     });
 
-    function reload(){
-        $.get("/admin/v1/reload",function(data){
-            if (data){
+    function reload() {
+        $.get("/admin/v1/reload", function (data) {
+            if (data) {
                 location.reload();
-            }else{
+            } else {
                 parent.location.reload();
             }
         });

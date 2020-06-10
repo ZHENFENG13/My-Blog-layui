@@ -58,12 +58,6 @@
             <artifactId>velocity-engine-core</artifactId>
             <version>2.1</version>
         </dependency>
-        <!-- 验证码 -->
-        <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
-            <version>2.3.2</version>
-        </dependency>
         <!-- commonmark core -->
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
@@ -97,6 +91,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.6</version>
         </dependency>
     </dependencies>
 

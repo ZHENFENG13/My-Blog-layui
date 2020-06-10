@@ -17,7 +17,7 @@
 
         blockquote {
             border-left: 4px solid #42b983;
-            padding: 10px 0px 10px 15px;
+            padding: 10px 0 10px 15px;
             color: #777;
             background-color: rgba(66, 185, 131, .1);
             max-width: 890px;
@@ -97,7 +97,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">邮箱</label>
                 <div class="layui-input-block">
-                    <input type="text" id="email" autocomplete="off" placeholder="必填" class="layui-input">
+                    <input type="text" id="email" autocomplete="off" placeholder="可不填" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -133,14 +133,11 @@
 <script src="/X-admin/editormd/src/editormd.js"></script>
 
 <script th:src="@{/blog/plugins/comment/valid.js}"></script>
-<script th:src="@{/blog/plugins/comment/comment.js}"></script>
-<!-- sweetalert -->
-<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
-<!-- 评论 -->
 <script th:src="@{/X-admin/lib/layui/layui.all.js}"></script>
 <script th:inline="javascript">
     ;!function () {
         var laypage = layui.laypage,
+            layer = layui.layer,
             $ = layui.$;
 
         var count = [[${blogDetailVO.commentCount}]];
@@ -213,6 +210,61 @@
         });
 
         $('article h1, article h2, article h3, article h4, article h5').find('a').removeAttr('target')
+
+        // 验证评论
+        $('#commentSubmit').click(function (obj) {
+            var blogId = $('#blogId').val();
+            var commentator = $('#commentator').val();
+            var email = $('#email').val();
+            var websiteUrl = $('#websiteUrl').val();
+            var commentBody = $('#commentBody').val();
+            if (isNull(blogId)) {
+                layer.alert("参数异常",{icon: 5})
+                return;
+            }
+            if (isNull(commentator)) {
+                layer.alert("请输入你的称呼",{icon: 5})
+                return;
+            }
+            if ((!isNull(email)) && !isEmail(email)) {
+                layer.alert("邮箱格式不正确",{icon: 5})
+                return;
+            }
+            if ((!isNull(websiteUrl)) && !isUrl(websiteUrl)) {
+                layer.alert("网站地址不正确",{icon: 5})
+                return;
+            }
+            if (!validCN_ENString2_100(commentator)) {
+                layer.alert("请输入符合规范的名称(不要输入特殊字符)",{icon: 5})
+                return;
+            }
+            if (!validCN_ENString2_100(commentBody)) {
+                layer.alert("请输入符合规范的评论内容(不要输入特殊字符)",{icon: 5})
+                return;
+            }
+            var data = {
+                "blogId": blogId, "commentator": commentator,
+                "email": email, "websiteUrl": websiteUrl, "commentBody": commentBody
+            };
+            console.log(data);
+            $.ajax({
+                type: 'POST',//方法类型
+                url: '/blog/comment',
+                data: data,
+                success: function (result) {
+                    if (result.resultCode === 200) {
+                        layer.alert("评论提交成功请等待博主审核",{icon: 6})
+                        $('#commentBody').val('');
+                    }
+                    else {
+                        layer.alert(result.message,{icon: 5})
+                    }
+                },
+                error: function () {
+                    layer.alert("操作失败",{icon: 5})
+                }
+            });
+        });
     }();
 </script>
 </html>

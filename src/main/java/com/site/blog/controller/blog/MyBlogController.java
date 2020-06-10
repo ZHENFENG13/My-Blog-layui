@@ -14,6 +14,7 @@ import com.site.blog.entity.*;
 import com.site.blog.service.*;
 import com.site.blog.util.PageResult;
 import com.site.blog.util.ResultGenerator;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -235,11 +236,13 @@ public class MyBlogController {
         List<BlogTagRelation> blogTagRelations = blogTagRelationService.list(new QueryWrapper<BlogTagRelation>()
                 .lambda()
                 .eq(BlogTagRelation::getBlogId, blogId));
-        blogInfo.setBlogViews(blogInfo.getBlogViews() + 1);
-        blogInfoService.updateById(blogInfo);
+        blogInfoService.updateById(new BlogInfo()
+                .setBlogId(blogInfo.getBlogId())
+                .setBlogViews(blogInfo.getBlogViews() + 1)
+        );
 
         // 获得关联的标签列表
-        List<Integer> tagIds = new ArrayList<>();
+        List<Integer> tagIds;
         List<BlogTag> tagList = new ArrayList<>();
         if (!blogTagRelations.isEmpty()) {
             tagIds = blogTagRelations.stream()
@@ -323,6 +326,8 @@ public class MyBlogController {
     public Result<String> comment(HttpServletRequest request,
                           @Validated BlogComment blogComment) {
         String ref = request.getHeader("Referer");
+        // 对非法字符进行转义，防止xss漏洞
+        blogComment.setCommentBody(StringEscapeUtils.escapeHtml4(blogComment.getCommentBody()));
         if (StringUtils.isEmpty(ref)) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR,"非法请求");
         }

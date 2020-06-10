@@ -12,6 +12,7 @@ import com.site.blog.entity.BlogInfo;
 import com.site.blog.service.BlogCommentService;
 import com.site.blog.util.DateUtils;
 import com.site.blog.util.ResultGenerator;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,6 +98,7 @@ public class CommentController {
     @PostMapping("/v1/comment/edit")
     public Result<String> editComment(BlogComment blogComment){
         blogComment.setReplyCreateTime(DateUtils.getLocalCurrentDate());
+        blogComment.setCommentBody(StringEscapeUtils.escapeHtml4(blogComment.getCommentBody()));
         boolean flag = blogCommentService.updateById(blogComment);
         if (flag){
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);

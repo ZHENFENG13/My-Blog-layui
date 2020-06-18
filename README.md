@@ -82,7 +82,7 @@ My-Blog-layui 的开发者是朱同学，是我在 QQ 群里认识的一位朋�
 
 ## 感谢
 
-- [myzhulin](https://github.com/myzhulin)
+- [Linn-cn](https://github.com/Linn-cn)
 - [sentsin](https://github.com/sentsin/layui)
 - [spring-projects](https://github.com/spring-projects/spring-boot)
 - [pandao](https://github.com/pandao/editor.md)

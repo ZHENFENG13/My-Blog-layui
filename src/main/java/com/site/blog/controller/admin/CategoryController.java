@@ -92,19 +92,16 @@ public class CategoryController {
 
     /**
      * 修改分类信息
-     *
-     * @param blogCategory
-     * @return com.site.blog.dto.Result
-     * @date 2019/8/30 14:55
+     * @author Linn-cn
+     * @date 2020/9/1
+     * @return com.site.blog.dto.Result<java.lang.String>
      */
     @ResponseBody
     @PostMapping("/v1/category/update")
     public Result<String> updateCategory(BlogCategory blogCategory) {
         BlogCategory sqlCategory = blogCategoryService.getById(blogCategory.getCategoryId());
         boolean flag = sqlCategory.getCategoryName().equals(blogCategory.getCategoryName());
-        if (flag) {
-            blogCategoryService.updateById(blogCategory);
-        } else {
+        if (!flag) {
             BlogInfo blogInfo = new BlogInfo()
                     .setBlogCategoryId(blogCategory.getCategoryId())
                     .setBlogCategoryName(blogCategory.getCategoryName());

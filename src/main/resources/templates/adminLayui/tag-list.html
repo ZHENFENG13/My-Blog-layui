@@ -116,9 +116,9 @@
                 , data = obj.data //得到所在行所有键值
                 , field = obj.field; //得到字段
             delete data['createTime'];
-            /*            $.post("/admin/v1/category/update",data, function (s) {
-                            layer.msg(s.message);
-                        });*/
+            $.post("/admin/v1/tags/update", data, function (s) {
+                layer.msg(s.message);
+            });
         });
 
         form.on('switch(isDeleted)', function (data) {

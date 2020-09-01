@@ -85,8 +85,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
@@ -118,8 +118,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda().like(BlogInfo::getBlogTitle, keyword)
-                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
@@ -162,12 +162,12 @@ public class MyBlogController {
         List<BlogTagRelation> list = blogTagRelationService.list(new QueryWrapper<BlogTagRelation>()
                 .lambda().eq(BlogTagRelation::getTagId, tagId));
         PageResult blogPageResult = null;
-        if (!list.isEmpty()){
+        if (!list.isEmpty()) {
             Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
             blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                     .lambda()
-                    .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
-                    .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                    .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                    .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
                     .in(BlogInfo::getBlogId, list.stream().map(BlogTagRelation::getBlogId).toArray())
                     .orderByDesc(BlogInfo::getCreateTime));
             blogPageResult = new PageResult
@@ -203,8 +203,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus,BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
+                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
                 .eq(BlogInfo::getBlogCategoryName, categoryName)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
@@ -238,8 +238,7 @@ public class MyBlogController {
                 .eq(BlogTagRelation::getBlogId, blogId));
         blogInfoService.updateById(new BlogInfo()
                 .setBlogId(blogInfo.getBlogId())
-                .setBlogViews(blogInfo.getBlogViews() + 1)
-        );
+                .setBlogViews(blogInfo.getBlogViews() + 1));
 
         // 获得关联的标签列表
         List<Integer> tagIds;
@@ -254,11 +253,11 @@ public class MyBlogController {
         Integer blogCommentCount = blogCommentService.count(new QueryWrapper<BlogComment>()
                 .lambda()
                 .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
-                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogComment::getIsDeleted, BlogStatusConstants.ZERO)
                 .eq(BlogComment::getBlogId, blogId));
 
         BlogDetailVO blogDetailVO = new BlogDetailVO();
-        BeanUtils.copyProperties(blogInfo,blogDetailVO);
+        BeanUtils.copyProperties(blogInfo, blogDetailVO);
         blogDetailVO.setCommentCount(blogCommentCount);
         request.setAttribute("blogDetailVO", blogDetailVO);
         request.setAttribute("tagList", tagList);
@@ -269,6 +268,7 @@ public class MyBlogController {
 
     /**
      * 评论列表
+     *
      * @param ajaxPutPage
      * @param blogId
      * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
@@ -276,13 +276,13 @@ public class MyBlogController {
      */
     @GetMapping("/blog/listComment")
     @ResponseBody
-    public AjaxResultPage<BlogComment> listComment(AjaxPutPage<BlogComment> ajaxPutPage,Integer blogId){
+    public AjaxResultPage<BlogComment> listComment(AjaxPutPage<BlogComment> ajaxPutPage, Integer blogId) {
         Page<BlogComment> page = ajaxPutPage.putPageToPage();
         blogCommentService.page(page, new QueryWrapper<BlogComment>()
                 .lambda()
                 .eq(BlogComment::getBlogId, blogId)
                 .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
-                .eq(BlogComment::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogComment::getIsDeleted, BlogStatusConstants.ZERO)
                 .orderByDesc(BlogComment::getCommentCreateTime));
         AjaxResultPage<BlogComment> ajaxResultPage = new AjaxResultPage<>();
         ajaxResultPage.setCount(page.getTotal());
@@ -292,6 +292,7 @@ public class MyBlogController {
 
     /**
      * 友链界面
+     *
      * @param request
      * @return java.lang.String
      * @date 2019/9/6 17:26
@@ -318,21 +319,22 @@ public class MyBlogController {
 
     /**
      * 提交评论
+     *
      * @return com.site.blog.dto.Result
      * @date 2019/9/6 17:40
      */
     @PostMapping(value = "/blog/comment")
     @ResponseBody
     public Result<String> comment(HttpServletRequest request,
-                          @Validated BlogComment blogComment) {
+                                  @Validated BlogComment blogComment) {
         String ref = request.getHeader("Referer");
         // 对非法字符进行转义，防止xss漏洞
         blogComment.setCommentBody(StringEscapeUtils.escapeHtml4(blogComment.getCommentBody()));
         if (StringUtils.isEmpty(ref)) {
-            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR,"非法请求");
+            return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR, "非法请求");
         }
         boolean flag = blogCommentService.save(blogComment);
-        if (flag){
+        if (flag) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);

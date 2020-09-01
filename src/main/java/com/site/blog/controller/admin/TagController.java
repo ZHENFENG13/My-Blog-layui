@@ -1,6 +1,7 @@
 package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.BlogStatusConstants;
 import com.site.blog.constants.HttpStatusEnum;
@@ -8,6 +9,7 @@ import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
+import com.site.blog.entity.BlogCategory;
 import com.site.blog.entity.BlogInfo;
 import com.site.blog.entity.BlogTag;
 import com.site.blog.entity.BlogTagRelation;
@@ -34,12 +36,6 @@ public class TagController {
 
     @Autowired
     private BlogTagService blogTagService;
-
-    @Autowired
-    private BlogInfoService blogInfoService;
-
-    @Autowired
-    private BlogTagRelationService blogTagRelationService;
 
 
     @GetMapping("/v1/tags")
@@ -133,5 +129,24 @@ public class TagController {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
         }
         return ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);
+    }
+
+
+    /**
+     * 修改标题名字
+     * @author Linn-cn
+     * @date 2020/9/1
+     * @return com.site.blog.dto.Result<java.lang.String>
+     */
+    @ResponseBody
+    @PostMapping("/v1/tags/update")
+    public Result<String> updateCategory(BlogTag blogTag) {
+        // TODO blogInfo的tags无实际意义，所以这里不再修改冗余的tags。
+        BlogTag sqlBlogTag = blogTagService.getById(blogTag.getTagId());
+        boolean flag = sqlBlogTag.getTagName().equals(blogTag.getTagName());
+        if (!flag) {
+            blogTagService.updateById(blogTag);
+        }
+        return ResultGenerator.getResultByHttp(HttpStatusEnum.OK);
     }
 }

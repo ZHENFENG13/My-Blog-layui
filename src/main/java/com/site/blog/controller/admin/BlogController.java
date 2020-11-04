@@ -2,7 +2,7 @@ package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.site.blog.constants.BlogStatusConstants;
+import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.UploadConstants;
 import com.site.blog.dto.AjaxPutPage;
@@ -196,7 +196,7 @@ public class BlogController {
     public Result<String> deleteBlog(@RequestParam Long blogId) {
         BlogInfo blogInfo = new BlogInfo()
                 .setBlogId(blogId)
-                .setIsDeleted(BlogStatusConstants.ONE)
+                .setIsDeleted(DeleteStatusEnum.DELETED.getStatus())
                 .setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogInfoService.updateById(blogInfo);
         if (flag) {
@@ -233,7 +233,7 @@ public class BlogController {
     public Result<String> restoreBlog(@RequestParam Long blogId) {
         BlogInfo blogInfo = new BlogInfo()
                 .setBlogId(blogId)
-                .setIsDeleted(BlogStatusConstants.ZERO)
+                .setIsDeleted(DeleteStatusEnum.NO_DELETED.getStatus())
                 .setUpdateTime(DateUtils.getLocalCurrentDate());
         boolean flag = blogInfoService.updateById(blogInfo);
         if (flag) {

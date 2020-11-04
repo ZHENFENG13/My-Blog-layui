@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.site.blog.constants.BlogStatusConstants;
+import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dao.BlogInfoMapper;
 import com.site.blog.dao.BlogTagMapper;
@@ -46,7 +46,7 @@ public class BlogTagServiceImpl extends ServiceImpl<BlogTagMapper, BlogTag> impl
     public List<BlogTagCount> getBlogTagCountForIndex() {
         QueryWrapper<BlogTag> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda()
-                .eq(BlogTag::getIsDeleted, BlogStatusConstants.ZERO);
+                .eq(BlogTag::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
         List<BlogTag> list = baseMapper.selectList(queryWrapper);
         List<BlogTagCount> blogTagCounts = list.stream()
                 .map(blogTag -> new BlogTagCount()

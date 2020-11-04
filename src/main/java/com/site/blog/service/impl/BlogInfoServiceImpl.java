@@ -2,17 +2,18 @@ package com.site.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.site.blog.constants.BlogStatusConstants;
+import com.site.blog.constants.BlogStatusEnum;
+import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.controller.vo.SimpleBlogListVO;
 import com.site.blog.dao.BlogCommentMapper;
+import com.site.blog.dao.BlogInfoMapper;
 import com.site.blog.dao.BlogTagRelationMapper;
 import com.site.blog.entity.BlogComment;
 import com.site.blog.entity.BlogInfo;
-import com.site.blog.dao.BlogInfoMapper;
 import com.site.blog.entity.BlogTagRelation;
 import com.site.blog.service.BlogInfoService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,8 +48,8 @@ public class BlogInfoServiceImpl extends ServiceImpl<BlogInfoMapper, BlogInfo> i
         Page<BlogInfo> page = new Page<>(1,5);
         blogInfoMapper.selectPage(page,new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .orderByDesc(BlogInfo::getCreateTime));
         for (BlogInfo blogInfo : page.getRecords()){
             SimpleBlogListVO simpleBlogListVO = new SimpleBlogListVO();
@@ -64,8 +65,8 @@ public class BlogInfoServiceImpl extends ServiceImpl<BlogInfoMapper, BlogInfo> i
         Page<BlogInfo> page = new Page<>(1,5);
         blogInfoMapper.selectPage(page,new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted,BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .orderByDesc(BlogInfo::getBlogViews));
         for (BlogInfo blogInfo : page.getRecords()){
             SimpleBlogListVO simpleBlogListVO = new SimpleBlogListVO();

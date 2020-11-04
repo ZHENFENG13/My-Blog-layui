@@ -1,30 +1,25 @@
 package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.site.blog.constants.BlogStatusConstants;
+import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
-import com.site.blog.entity.BlogCategory;
-import com.site.blog.entity.BlogInfo;
 import com.site.blog.entity.BlogTag;
-import com.site.blog.entity.BlogTagRelation;
-import com.site.blog.service.BlogInfoService;
-import com.site.blog.service.BlogTagRelationService;
 import com.site.blog.service.BlogTagService;
 import com.site.blog.util.DateUtils;
 import com.site.blog.util.ResultGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description: 标签Controller
@@ -53,7 +48,7 @@ public class TagController {
     @GetMapping("/v1/tags/list")
     public Result<List<BlogTag>> tagsList(){
         QueryWrapper<BlogTag> queryWrapper = new QueryWrapper<BlogTag>();
-        queryWrapper.lambda().eq(BlogTag::getIsDeleted, BlogStatusConstants.ZERO);
+        queryWrapper.lambda().eq(BlogTag::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
         List<BlogTag> list = blogTagService.list(queryWrapper);
         if (CollectionUtils.isEmpty(list)){
             ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);

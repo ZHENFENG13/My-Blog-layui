@@ -35,7 +35,7 @@ public class ApplicationControllerExceptionHandler {
     public Result<String> bindException(BindException ex) {
         StringBuilder message = new StringBuilder();
         ex.getBindingResult().getAllErrors()
-                .forEach(error -> message.append(error.getDefaultMessage()).append(","));
+                .forEach(error -> message.append(error.getDefaultMessage()).append(";"));
         return ResultGenerator.getResultByMsg(HttpStatusEnum.BAD_REQUEST,
                 message.substring(0, message.length() - 1));
     }
@@ -51,7 +51,7 @@ public class ApplicationControllerExceptionHandler {
     public Result<String> handlerMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         StringBuilder message = new StringBuilder();
         ex.getBindingResult().getAllErrors()
-                .forEach(error -> message.append(error.getDefaultMessage()).append(","));
+                .forEach(error -> message.append(error.getDefaultMessage()).append(";"));
         return ResultGenerator.getResultByMsg(HttpStatusEnum.BAD_REQUEST,
                 message.substring(0, message.length() - 1));
     }

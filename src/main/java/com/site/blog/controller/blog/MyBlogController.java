@@ -3,9 +3,7 @@ package com.site.blog.controller.blog;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.site.blog.constants.BlogStatusConstants;
-import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.constants.LinkConstants;
+import com.site.blog.constants.*;
 import com.site.blog.controller.vo.BlogDetailVO;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
@@ -85,8 +83,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
@@ -118,8 +116,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda().like(BlogInfo::getBlogTitle, keyword)
-                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
                 (page.getRecords(), page.getTotal(), 8, pageNum);
@@ -166,8 +164,8 @@ public class MyBlogController {
             Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
             blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                     .lambda()
-                    .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                    .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
+                    .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                    .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                     .in(BlogInfo::getBlogId, list.stream().map(BlogTagRelation::getBlogId).toArray())
                     .orderByDesc(BlogInfo::getCreateTime));
             blogPageResult = new PageResult
@@ -203,8 +201,8 @@ public class MyBlogController {
         Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
         blogInfoService.page(page, new QueryWrapper<BlogInfo>()
                 .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusConstants.ONE)
-                .eq(BlogInfo::getIsDeleted, BlogStatusConstants.ZERO)
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .eq(BlogInfo::getBlogCategoryName, categoryName)
                 .orderByDesc(BlogInfo::getCreateTime));
         PageResult blogPageResult = new PageResult
@@ -252,8 +250,8 @@ public class MyBlogController {
         // 关联评论的Count
         Integer blogCommentCount = blogCommentService.count(new QueryWrapper<BlogComment>()
                 .lambda()
-                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
-                .eq(BlogComment::getIsDeleted, BlogStatusConstants.ZERO)
+                .eq(BlogComment::getCommentStatus, CommentStatusEnum.ALLOW.getStatus())
+                .eq(BlogComment::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .eq(BlogComment::getBlogId, blogId));
 
         BlogDetailVO blogDetailVO = new BlogDetailVO();
@@ -281,8 +279,8 @@ public class MyBlogController {
         blogCommentService.page(page, new QueryWrapper<BlogComment>()
                 .lambda()
                 .eq(BlogComment::getBlogId, blogId)
-                .eq(BlogComment::getCommentStatus, BlogStatusConstants.ONE)
-                .eq(BlogComment::getIsDeleted, BlogStatusConstants.ZERO)
+                .eq(BlogComment::getCommentStatus, CommentStatusEnum.ALLOW.getStatus())
+                .eq(BlogComment::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
                 .orderByDesc(BlogComment::getCommentCreateTime));
         AjaxResultPage<BlogComment> ajaxResultPage = new AjaxResultPage<>();
         ajaxResultPage.setCount(page.getTotal());

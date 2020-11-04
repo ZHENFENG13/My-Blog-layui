@@ -148,23 +148,23 @@ public class AdminController {
     public String index(HttpSession session) {
         session.setAttribute("categoryCount", blogCategoryService.count(
                 new QueryWrapper<BlogCategory>().lambda().eq(BlogCategory::getIsDeleted,
-                        BlogStatusConstants.ZERO)
+                        DeleteStatusEnum.NO_DELETED.getStatus())
         ));
         session.setAttribute("blogCount", blogInfoService.count(
                 new QueryWrapper<BlogInfo>().lambda().eq(BlogInfo::getIsDeleted,
-                        BlogStatusConstants.ZERO)
+                        DeleteStatusEnum.NO_DELETED.getStatus())
         ));
         session.setAttribute("linkCount", blogLinkService.count(
                 new QueryWrapper<BlogLink>().lambda().eq(BlogLink::getIsDeleted,
-                        BlogStatusConstants.ZERO)
+                        DeleteStatusEnum.NO_DELETED.getStatus())
         ));
         session.setAttribute("tagCount", blogTagService.count(
                 new QueryWrapper<BlogTag>().lambda().eq(BlogTag::getIsDeleted,
-                        BlogStatusConstants.ZERO)
+                        DeleteStatusEnum.NO_DELETED.getStatus())
         ));
         session.setAttribute("commentCount", blogCommentService.count(
                 new QueryWrapper<BlogComment>().lambda().eq(BlogComment::getIsDeleted,
-                        BlogStatusConstants.ZERO)
+                        DeleteStatusEnum.NO_DELETED.getStatus())
         ));
         session.setAttribute("sysList",blogConfigService.list());
         return "adminLayui/index";

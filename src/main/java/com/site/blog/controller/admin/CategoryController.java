@@ -1,13 +1,10 @@
 package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.site.blog.constants.BlogStatusConstants;
+import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.constants.SysConfigConstants;
 import com.site.blog.dto.AjaxPutPage;
 import com.site.blog.dto.AjaxResultPage;
 import com.site.blog.dto.Result;
@@ -54,7 +51,7 @@ public class CategoryController {
     @GetMapping("/v1/category/list")
     public Result<List<BlogCategory>> categoryList() {
         QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<BlogCategory>();
-        queryWrapper.lambda().eq(BlogCategory::getIsDeleted, BlogStatusConstants.ZERO);
+        queryWrapper.lambda().eq(BlogCategory::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
         List<BlogCategory> list = blogCategoryService.list(queryWrapper);
         if (CollectionUtils.isEmpty(list)) {
             ResultGenerator.getResultByHttp(HttpStatusEnum.INTERNAL_SERVER_ERROR);

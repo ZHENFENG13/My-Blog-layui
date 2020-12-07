@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.AjaxPutPage;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.AjaxPutPage;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.BlogCategory;
 import com.site.blog.entity.BlogInfo;
 import com.site.blog.service.BlogCategoryService;
@@ -44,7 +44,7 @@ public class CategoryController {
      * 分类的集合数据[用于下拉框]
      *
      * @param
-     * @return com.site.blog.dto.Result<com.site.blog.entity.BlogCategory>
+     * @return com.site.blog.pojo.dto.Result<com.site.blog.entity.BlogCategory>
      * @date 2019/8/30 14:38
      */
     @ResponseBody
@@ -69,7 +69,7 @@ public class CategoryController {
      *
      * @param ajaxPutPage
      * @param condition
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogCategory>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogCategory>
      * @date 2019/8/30 14:38
      */
     @ResponseBody
@@ -91,7 +91,7 @@ public class CategoryController {
      * 修改分类信息
      * @author Linn-cn
      * @date 2020/9/1
-     * @return com.site.blog.dto.Result<java.lang.String>
+     * @return com.site.blog.pojo.dto.Result<java.lang.String>
      */
     @ResponseBody
     @PostMapping("/v1/category/update")
@@ -114,7 +114,7 @@ public class CategoryController {
      * 修改分类状态
      *
      * @param blogCategory
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/30 14:55
      */
     @ResponseBody
@@ -131,7 +131,7 @@ public class CategoryController {
      * 清除分类信息
      *
      * @param blogCategory
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/9/1 15:48
      */
     @ResponseBody
@@ -152,7 +152,7 @@ public class CategoryController {
      * 新增分类信息
      *
      * @param blogCategory
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/9/1 15:48
      */
     @ResponseBody

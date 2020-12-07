@@ -1,10 +1,11 @@
-package com.site.blog.dto;
+package com.site.blog.pojo.dto;
 
 import java.io.Serializable;
 
 /**
  * 返回结果集
- * @author: 南街
+ * @author Linn-cn
+ * @date 2020/12/7
  */
 public class Result<T> implements Serializable {
     private static final long serialVersionUID = 1L;

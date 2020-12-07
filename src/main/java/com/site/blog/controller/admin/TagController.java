@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.AjaxPutPage;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.AjaxPutPage;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.BlogTag;
 import com.site.blog.service.BlogTagService;
 import com.site.blog.util.DateUtils;
@@ -60,7 +60,7 @@ public class TagController {
      * 标签分页
      * @param ajaxPutPage
      * @param condition
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogTag>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogTag>
      * @date 2019/9/1 11:20
      */
     @ResponseBody
@@ -80,7 +80,7 @@ public class TagController {
     /**
      * 修改标签状态
      * @param blogTag
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/30 14:55
      */
     @ResponseBody
@@ -96,7 +96,7 @@ public class TagController {
     /**
      * 添加标签
      * @param blogTag
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/9/2 10:12 
      */
     @ResponseBody
@@ -114,7 +114,7 @@ public class TagController {
     /**
      * 清除标签
      * @param tagId
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/9/2 18:41
      */
     @ResponseBody
@@ -131,7 +131,7 @@ public class TagController {
      * 修改标题名字
      * @author Linn-cn
      * @date 2020/9/1
-     * @return com.site.blog.dto.Result<java.lang.String>
+     * @return com.site.blog.pojo.dto.Result<java.lang.String>
      */
     @ResponseBody
     @PostMapping("/v1/tags/update")

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.site.blog.constants.BlogStatusEnum;
 import com.site.blog.constants.DeleteStatusEnum;
-import com.site.blog.controller.vo.SimpleBlogListVO;
+import com.site.blog.pojo.vo.SimpleBlogListVO;
 import com.site.blog.dao.BlogCommentMapper;
 import com.site.blog.dao.BlogInfoMapper;
 import com.site.blog.dao.BlogTagRelationMapper;

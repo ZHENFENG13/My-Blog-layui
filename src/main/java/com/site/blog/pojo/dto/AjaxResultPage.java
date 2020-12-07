@@ -1,8 +1,4 @@
-package com.site.blog.dto;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+package com.site.blog.pojo.dto;
 
 import java.io.Serializable;
 import java.util.List;

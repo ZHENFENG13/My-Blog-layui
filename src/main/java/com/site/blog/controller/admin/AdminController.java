@@ -2,7 +2,7 @@ package com.site.blog.controller.admin;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.site.blog.constants.*;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.*;
 import com.site.blog.service.*;
 import com.site.blog.util.MD5Utils;

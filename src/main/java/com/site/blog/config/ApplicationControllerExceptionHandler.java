@@ -1,7 +1,7 @@
 package com.site.blog.config;
 
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.util.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

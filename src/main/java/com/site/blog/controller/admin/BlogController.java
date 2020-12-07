@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.DeleteStatusEnum;
 import com.site.blog.constants.HttpStatusEnum;
 import com.site.blog.constants.UploadConstants;
-import com.site.blog.dto.AjaxPutPage;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.AjaxPutPage;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.BlogInfo;
 import com.site.blog.entity.BlogTagRelation;
 import com.site.blog.service.BlogInfoService;
@@ -150,7 +150,7 @@ public class BlogController {
      *
      * @param ajaxPutPage 分页参数
      * @param condition   筛选条件
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogInfo>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogInfo>
      * @date 2019/8/28 16:43
      */
     @ResponseBody
@@ -170,7 +170,7 @@ public class BlogController {
      * 修改博客的部分状态相关信息
      *
      * @param blogInfo
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/29 12:22
      */
     @ResponseBody
@@ -188,7 +188,7 @@ public class BlogController {
      * 修改文章的删除状态为已删除
      *
      * @param blogId
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/29 14:02
      */
     @ResponseBody
@@ -209,7 +209,7 @@ public class BlogController {
      * 清除文章
      *
      * @param blogId
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/29 14:02
      */
     @ResponseBody
@@ -225,7 +225,7 @@ public class BlogController {
      * 还原文章
      *
      * @param blogId
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/29 16:36
      */
     @ResponseBody

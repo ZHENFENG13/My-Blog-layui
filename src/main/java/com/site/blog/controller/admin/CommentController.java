@@ -3,9 +3,9 @@ package com.site.blog.controller.admin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.AjaxPutPage;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.AjaxPutPage;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.BlogComment;
 import com.site.blog.service.BlogCommentService;
 import com.site.blog.util.DateUtils;
@@ -38,7 +38,7 @@ public class CommentController {
      * 返回评论列表
      * @param ajaxPutPage
      * @param condition
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
      * @date 2020/4/24 21:23
      */
     @ResponseBody
@@ -56,7 +56,7 @@ public class CommentController {
     /**
      * 修改评论状态
      * @param blogComment
-     * @return com.site.blog.dto.Result<java.lang.String>
+     * @return com.site.blog.pojo.dto.Result<java.lang.String>
      * @date 2020/4/24 21:21
      */
     @ResponseBody
@@ -72,7 +72,7 @@ public class CommentController {
     /**
      * 删除评论
      * @param commentId
-     * @return com.site.blog.dto.Result<java.lang.String>
+     * @return com.site.blog.pojo.dto.Result<java.lang.String>
      * @date 2020/4/24 21:23
      */
     @ResponseBody
@@ -89,7 +89,7 @@ public class CommentController {
     /**
      * 编辑评论
      * @param blogComment
-     * @return com.site.blog.dto.Result<java.lang.String>
+     * @return com.site.blog.pojo.dto.Result<java.lang.String>
      * @date 2020/4/24 21:21
      */
     @ResponseBody

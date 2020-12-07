@@ -1,8 +1,8 @@
 package com.site.blog.controller.admin;
 
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.BlogConfig;
 import com.site.blog.service.BlogConfigService;
 import com.site.blog.util.DateUtils;
@@ -40,7 +40,7 @@ public class ConfigController {
     /**
      * 返回系统配置信息
      * @param
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogConfig>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogConfig>
      * @date 2019/8/29 19:30
      */
     @ResponseBody
@@ -59,7 +59,7 @@ public class ConfigController {
     /**
      * 修改系统信息
      * @param blogConfig
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/29 19:45
      */
     @ResponseBody
@@ -83,7 +83,7 @@ public class ConfigController {
     /**
      * 新增系统信息项
      * @param blogConfig
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/30 10:57
      */
     @ResponseBody
@@ -102,7 +102,7 @@ public class ConfigController {
     /**
      * 删除配置信息项
      * @param configField
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/8/30 11:21
      */
     @ResponseBody

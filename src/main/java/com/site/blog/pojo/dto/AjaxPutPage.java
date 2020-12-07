@@ -1,4 +1,4 @@
-package com.site.blog.dto;
+package com.site.blog.pojo.dto;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -9,14 +9,25 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  * @create: 2019-01-03 11:40
  **/
 public class AjaxPutPage<T> {
+    /**
+     * 当前页码
+     */
+    Integer page;
 
-    Integer page;   //当前页码
+    /**
+     * 每页显示
+     */
+    Integer limit;
 
-    Integer limit;  //每页显示
+    /**
+     * 从多少开始
+     */
+    Integer start;
 
-    Integer start;  //从多少开始
-
-    T condition;    //条件类
+    /**
+     * 条件类
+     */
+    T condition;
 
     public Integer getPage() {
         return page;
@@ -53,10 +64,11 @@ public class AjaxPutPage<T> {
 
     /**
      * 将符合Layui的格式转成mybtais-plus分页的page
+     *
      * @return
      */
-    public Page<T> putPageToPage(){
-        return new Page<T>(this.page,this.limit);
+    public Page<T> putPageToPage() {
+        return new Page<T>(this.page, this.limit);
     }
 
     @Override

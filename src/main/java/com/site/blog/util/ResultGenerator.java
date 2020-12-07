@@ -1,8 +1,7 @@
 package com.site.blog.util;
 
 import com.site.blog.constants.HttpStatusEnum;
-import com.site.blog.dto.Result;
-import org.springframework.util.StringUtils;
+import com.site.blog.pojo.dto.Result;
 
 /**
  * 响应结果生成工具

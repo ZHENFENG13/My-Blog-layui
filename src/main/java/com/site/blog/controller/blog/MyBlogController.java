@@ -1,13 +1,16 @@
 package com.site.blog.controller.blog;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.site.blog.constants.*;
-import com.site.blog.controller.vo.BlogDetailVO;
-import com.site.blog.dto.AjaxPutPage;
-import com.site.blog.dto.AjaxResultPage;
-import com.site.blog.dto.Result;
+import com.site.blog.pojo.dto.BlogPageCondition;
+import com.site.blog.pojo.vo.BlogDetailVO;
+import com.site.blog.pojo.dto.AjaxPutPage;
+import com.site.blog.pojo.dto.AjaxResultPage;
+import com.site.blog.pojo.dto.Result;
 import com.site.blog.entity.*;
 import com.site.blog.service.*;
 import com.site.blog.util.PageResult;
@@ -16,27 +19,27 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
 /**
- * @Description: 博客Controller
- * @date: 2019/9/1 20:57
+ * 博客前台
+ *
+ * @author Linn-cn
+ * @date 2020/12/7
  */
-
 @Controller
 public class MyBlogController {
-
 
     public static String theme = "amaze";
 
@@ -60,41 +63,32 @@ public class MyBlogController {
 
     /**
      * 博客首页
-     *
      * @param request
-     * @return java.lang.String
-     * @date 2019/9/6 7:03
+     * @author Linn-cn
+     * @date 2020/12/7
      */
     @GetMapping({"/", "/index", "index.html"})
     public String index(HttpServletRequest request) {
-        return this.page(request, 1);
+        return this.page(request, new BlogPageCondition()
+                .setPageNum(1)
+                .setPageName("首页")
+        );
     }
 
     /**
-     * 博客分页
+     * 分类
      *
      * @param request
-     * @param pageNum
-     * @return java.lang.String
-     * @date 2019/9/6 7:03
+     * @param categoryName
+     * @author Linn-cn
+     * @date 2020/12/7
      */
-    @GetMapping({"/page/{pageNum}"})
-    public String page(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
-        Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
-        blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
-                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
-                .orderByDesc(BlogInfo::getCreateTime));
-        PageResult blogPageResult = new PageResult
-                (page.getRecords(), page.getTotal(), 8, pageNum);
-        request.setAttribute("blogPageResult", blogPageResult);
-        request.setAttribute("newBlogs", blogInfoService.getNewBlog());
-        request.setAttribute("hotBlogs", blogInfoService.getHotBlog());
-        request.setAttribute("hotTags", blogTagService.getBlogTagCountForIndex());
-        request.setAttribute("pageName", "首页");
-        request.setAttribute("configurations", blogConfigService.getAllConfigs());
-        return "blog/" + theme + "/index";
+    @GetMapping({"/category/{categoryName}"})
+    public String category(HttpServletRequest request, @PathVariable("categoryName") String categoryName) {
+        return this.page(request, new BlogPageCondition()
+                .setPageNum(1)
+                .setPageName("分类")
+                .setCategoryName(categoryName));
     }
 
     /**
@@ -107,30 +101,11 @@ public class MyBlogController {
      */
     @GetMapping({"/search/{keyword}"})
     public String search(HttpServletRequest request, @PathVariable("keyword") String keyword) {
-        return search(request, keyword, 1);
-    }
-
-    @GetMapping({"/search/{keyword}/{pageNum}"})
-    public String search(HttpServletRequest request, @PathVariable("keyword") String keyword, @PathVariable("pageNum") Integer pageNum) {
-
-        Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
-        blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                .lambda().like(BlogInfo::getBlogTitle, keyword)
-                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
-                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
-                .orderByDesc(BlogInfo::getCreateTime));
-        PageResult blogPageResult = new PageResult
-                (page.getRecords(), page.getTotal(), 8, pageNum);
-
-        request.setAttribute("blogPageResult", blogPageResult);
-        request.setAttribute("pageName", "搜索");
-        request.setAttribute("pageUrl", "search");
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("newBlogs", blogInfoService.getNewBlog());
-        request.setAttribute("hotBlogs", blogInfoService.getHotBlog());
-        request.setAttribute("hotTags", blogTagService.getBlogTagCountForIndex());
-        request.setAttribute("configurations", blogConfigService.getAllConfigs());
-        return "blog/" + theme + "/list";
+        return this.page(request, new BlogPageCondition()
+                .setPageNum(1)
+                .setPageName("首页")
+                .setKeyword(keyword)
+        );
     }
 
     /**
@@ -143,80 +118,61 @@ public class MyBlogController {
      */
     @GetMapping({"/tag/{tagId}"})
     public String tag(HttpServletRequest request, @PathVariable("tagId") String tagId) {
-        return tag(request, tagId, 1);
+        return this.page(request, new BlogPageCondition()
+                .setPageNum(1)
+                .setPageName("标签")
+                .setTagId(tagId));
     }
 
     /**
-     * 标签分类
+     * 博客分页
      *
      * @param request
-     * @param tagId
-     * @param pageNum
-     * @return java.lang.String
-     * @date 2019/9/6 7:04
+     * @param condition
+     * @throws
+     * @author Linn-cn
+     * @date 2020/12/7
      */
-    @GetMapping({"/tag/{tagId}/{pageNum}"})
-    public String tag(HttpServletRequest request, @PathVariable("tagId") String tagId, @PathVariable("pageNum") Integer pageNum) {
-        List<BlogTagRelation> list = blogTagRelationService.list(new QueryWrapper<BlogTagRelation>()
-                .lambda().eq(BlogTagRelation::getTagId, tagId));
-        PageResult blogPageResult = null;
-        if (!list.isEmpty()) {
-            Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
-            blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                    .lambda()
-                    .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
-                    .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
-                    .in(BlogInfo::getBlogId, list.stream().map(BlogTagRelation::getBlogId).toArray())
-                    .orderByDesc(BlogInfo::getCreateTime));
-            blogPageResult = new PageResult
-                    (page.getRecords(), page.getTotal(), 8, pageNum);
+    @GetMapping({"/page"})
+    public String page(HttpServletRequest request, BlogPageCondition condition) {
+        if (Objects.isNull(condition.getPageNum())) {
+            condition.setPageNum(1);
+        }
+        if (Objects.isNull(condition.getPageSize())) {
+            condition.setPageSize(5);
+        }
+        Page<BlogInfo> page = new Page<>(condition.getPageNum(), condition.getPageSize());
+        LambdaQueryWrapper<BlogInfo> sqlWrapper = Wrappers.<BlogInfo>lambdaQuery()
+                .like(Objects.nonNull(condition.getKeyword()), BlogInfo::getBlogTitle, condition.getKeyword())
+                .eq(Objects.nonNull(condition.getCategoryName()), BlogInfo::getBlogCategoryName, condition.getCategoryName())
+                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
+                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
+        if (Objects.nonNull(condition.getTagId())) {
+            List<BlogTagRelation> list = blogTagRelationService.list(new QueryWrapper<BlogTagRelation>()
+                    .lambda().eq(BlogTagRelation::getTagId, condition.getTagId()));
+            if (!CollectionUtils.isEmpty(list)) {
+                sqlWrapper.in(BlogInfo::getBlogId, list.stream().map(BlogTagRelation::getBlogId).toArray());
+            }
+        }
+        sqlWrapper.orderByDesc(BlogInfo::getCreateTime);
+        blogInfoService.page(page, sqlWrapper);
+        PageResult blogPageResult = new PageResult(page.getRecords(), page.getTotal(), condition.getPageSize(), condition.getPageNum());
+        if (Objects.nonNull(condition.getKeyword())) {
+            request.setAttribute("keyword", condition.getKeyword());
+        }
+        if (Objects.nonNull(condition.getTagId())) {
+            request.setAttribute("tagId", condition.getTagId());
+        }
+        if (Objects.nonNull(condition.getCategoryName())) {
+            request.setAttribute("categoryName", condition.getCategoryName());
         }
         request.setAttribute("blogPageResult", blogPageResult);
-        request.setAttribute("pageName", "标签");
-        request.setAttribute("pageUrl", "tag");
-        request.setAttribute("keyword", tagId);
+        request.setAttribute("pageName", condition.getPageName());
         request.setAttribute("newBlogs", blogInfoService.getNewBlog());
         request.setAttribute("hotBlogs", blogInfoService.getHotBlog());
         request.setAttribute("hotTags", blogTagService.getBlogTagCountForIndex());
         request.setAttribute("configurations", blogConfigService.getAllConfigs());
-        return "blog/" + theme + "/list";
-    }
-
-    @GetMapping({"/category/{categoryName}"})
-    public String category(HttpServletRequest request, @PathVariable("categoryName") String categoryName) {
-        return category(request, categoryName, 1);
-    }
-
-    /**
-     * 分类列表
-     *
-     * @param request
-     * @param categoryName
-     * @param pageNum
-     * @return java.lang.String
-     * @date 2019/9/6 13:04
-     */
-    @GetMapping({"/category/{categoryName}/{pageNum}"})
-    public String category(HttpServletRequest request, @PathVariable("categoryName") String categoryName, @PathVariable("pageNum") Integer pageNum) {
-        Page<BlogInfo> page = new Page<BlogInfo>(pageNum, 8);
-        blogInfoService.page(page, new QueryWrapper<BlogInfo>()
-                .lambda()
-                .eq(BlogInfo::getBlogStatus, BlogStatusEnum.RELEASE.getStatus())
-                .eq(BlogInfo::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus())
-                .eq(BlogInfo::getBlogCategoryName, categoryName)
-                .orderByDesc(BlogInfo::getCreateTime));
-        PageResult blogPageResult = new PageResult
-                (page.getRecords(), page.getTotal(), 8, pageNum);
-
-        request.setAttribute("blogPageResult", blogPageResult);
-        request.setAttribute("pageName", "分类");
-        request.setAttribute("pageUrl", "category");
-        request.setAttribute("keyword", categoryName);
-        request.setAttribute("newBlogs", blogInfoService.getNewBlog());
-        request.setAttribute("hotBlogs", blogInfoService.getHotBlog());
-        request.setAttribute("hotTags", blogTagService.getBlogTagCountForIndex());
-        request.setAttribute("configurations", blogConfigService.getAllConfigs());
-        return "blog/" + theme + "/list";
+        return "blog/" + theme + "/index";
     }
 
     /**
@@ -269,7 +225,7 @@ public class MyBlogController {
      *
      * @param ajaxPutPage
      * @param blogId
-     * @return com.site.blog.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
+     * @return com.site.blog.pojo.dto.AjaxResultPage<com.site.blog.entity.BlogComment>
      * @date 2019/11/19 8:42
      */
     @GetMapping("/blog/listComment")
@@ -318,7 +274,7 @@ public class MyBlogController {
     /**
      * 提交评论
      *
-     * @return com.site.blog.dto.Result
+     * @return com.site.blog.pojo.dto.Result
      * @date 2019/9/6 17:40
      */
     @PostMapping(value = "/blog/comment")

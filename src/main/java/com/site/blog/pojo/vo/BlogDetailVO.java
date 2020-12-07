@@ -1,4 +1,4 @@
-package com.site.blog.controller.vo;
+package com.site.blog.pojo.vo;
 
 import java.util.Date;
 import java.util.List;

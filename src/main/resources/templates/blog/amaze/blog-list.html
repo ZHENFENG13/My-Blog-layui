@@ -42,37 +42,43 @@
                 </th:block>
             </th:block>
             <!-- 分页逻辑 -->
-            <th:block th:if="${null != blogPageResult}">
-                <ul class="am-pagination">
-                    <li th:class="${blogPageResult.currPage==1}?'disabled' : 'am-pagination-prev'"><a
-                            th:href="@{${blogPageResult.currPage==1}?'##':'/page/' + ${blogPageResult.currPage-1}}">&laquo;</a>
-                    </li>
-                    <li th:if="${blogPageResult.currPage-3 >=1}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage-3}}"
-                            th:text="${blogPageResult.currPage -3}">1</a></li>
-                    <li th:if="${blogPageResult.currPage-2 >=1}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage-2}}"
-                            th:text="${blogPageResult.currPage -2}">1</a></li>
-                    <li th:if="${blogPageResult.currPage-1 >=1}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage-1}}"
-                            th:text="${blogPageResult.currPage -1}">1</a></li>
-                    <li class="active"><a href="#" th:text="${blogPageResult.currPage}">1</a></li>
-                    <li th:if="${blogPageResult.currPage+1 <=blogPageResult.totalPage}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage+1}}"
-                            th:text="${blogPageResult.currPage +1}">1</a></li>
-                    <li th:if="${blogPageResult.currPage+2 <=blogPageResult.totalPage}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage+2}}"
-                            th:text="${blogPageResult.currPage +2}">1</a></li>
-                    <li th:if="${blogPageResult.currPage+3 <=blogPageResult.totalPage}"><a
-                            th:href="@{'/page/' + ${blogPageResult.currPage+3}}"
-                            th:text="${blogPageResult.currPage +3}">1</a></li>
-                    <li th:class="${blogPageResult.currPage==blogPageResult.totalPage}?'disabled' : ''">
-                        <a
-                                th:href="@{${blogPageResult.currPage==blogPageResult.totalPage}?'##' : '/page/' + ${blogPageResult.currPage+1}}">&raquo;</a>
-                    </li>
-                </ul>
-            </th:block>
+            <div id="page"></div>
         </div>
     </main>
+    <link rel="stylesheet" type="text/css" th:href="@{/X-admin/lib/layui/css/layui.css}">
+    <script type="text/javascript" th:src="@{/X-admin/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/X-admin/lib/layui/layui.js}" charset="utf-8"></script>
+    <script type="application/javascript" th:inline="javascript">
+        layui.use(['laypage'], function () {
+            var laypage = layui.laypage,
+                $ = layui.jquery;
+            laypage.render({
+                elem: 'page'
+                , count: [[${blogPageResult.totalCount}?:'1']] //数据总数
+                , limit: 5
+                , curr: [[${blogPageResult.currPage}?:'1']]
+                , jump: function (obj, first) {
+                    //首次不执行
+                    if(!first){
+                        var url = "/page?pageNum=" + obj.curr + "&pageSize=" + obj.limit;
+                        if ([[${keyword}]] != null){
+                            url = url + "&keyword=" + [[${keyword}]];
+                        }
+                        if ([[${tagId}]] != null){
+                            url = url + "&tagId=" + [[${tagId}]];
+                        }
+                        if ([[${categoryName}]] != null){
+                            url = url + "&categoryName=" + [[${categoryName}]];
+                        }
+                        if ([[${pageName}]] != null){
+                            url = url + "&pageName=" + [[${pageName}]];
+                        }
+                        location.href = url;
+                    }
+                }
+            });
+
+        });
+    </script>
 </div>
 </html>

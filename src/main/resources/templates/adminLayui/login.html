@@ -56,36 +56,42 @@
 
         var slider = sliderVerify.render({
             elem: '#slider',
-            onOk: function () {//当验证通过回调
+            // 当验证通过回调
+            onOk: function () {
                 layer.msg("滑块验证通过");
             }
         });
 
-        //监听提交
+        // 监听提交
         form.on('submit(login)', function (data) {
-            $.ajax({
-                url: "/admin/v1/login",
-                type: "post",
-                data: data.field,
-                success: function(s) {
-                    if (s.resultCode == 200) {
-                        //加载层-风格3
-                        layer.load(2);
-                        setTimeout(function () {
-                            layer.closeAll('loading');
-                        }, 1500);
-                        layer.msg(s.message, function () {
-                            location.href = s.data;
-                        });
-                    } else {
-                        layer.msg(s.message, function () {
-                        });
+            // 用于表单验证是否已经滑动成功
+            if(slider.isOk()){
+                $.ajax({
+                    url: "/admin/v1/login",
+                    type: "post",
+                    data: data.field,
+                    success: function(s) {
+                        if (s.resultCode == 200) {
+                            //加载层-风格3
+                            layer.load(2);
+                            setTimeout(function () {
+                                layer.closeAll('loading');
+                            }, 1500);
+                            layer.msg(s.message, function () {
+                                location.href = s.data;
+                            });
+                        } else {
+                            layer.msg(s.message, function () {
+                            });
+                        }
+                    },
+                    error:function(){
+                        layer.msg("接口异常!", function () {});
                     }
-                },
-                error:function(){
-                    layer.msg("接口异常!", function () {});
-                }
-            });
+                });
+            }else{
+                layer.msg("请先通过滑块验证");
+            }
         });
     });
 </script>

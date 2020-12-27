@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @qq交流群 796794009
+ * @qq 1320291471
  * @Description: 友链Controller
- * @date: 2019/8/6 17:23
+ * @create 2020/12/27
  */
 @Controller
 @RequestMapping("/admin")

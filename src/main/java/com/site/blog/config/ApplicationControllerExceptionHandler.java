@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @program: FruitSales
- * @description: 全局异常统一处理类
- * @author: 南街
- * @create: 2019-01-17 10:24
- **/
-
+ * @qq交流群 796794009
+ * @qq 1320291471
+ * @Description: 全局异常统一处理类
+ * @create 2020/12/27
+ */
 @ControllerAdvice
 public class ApplicationControllerExceptionHandler {
 

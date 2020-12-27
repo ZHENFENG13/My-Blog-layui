@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @program: my-blog
- * @classname: ConfigController
- * @description: blog配置controller
- * @create: 2019-08-29 19:09
- **/
+ * @qq交流群 796794009
+ * @qq 1320291471
+ * @Description: blog配置controller
+ * @create 2020/12/27
+ */
 @Controller
 @RequestMapping("/admin")
 public class ConfigController {

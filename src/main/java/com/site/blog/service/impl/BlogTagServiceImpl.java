@@ -48,15 +48,16 @@ public class BlogTagServiceImpl extends ServiceImpl<BlogTagMapper, BlogTag> impl
         queryWrapper.lambda()
                 .eq(BlogTag::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
         List<BlogTag> list = baseMapper.selectList(queryWrapper);
-        List<BlogTagCount> blogTagCounts = list.stream()
+        return list.stream()
                 .map(blogTag -> new BlogTagCount()
                         .setTagId(blogTag.getTagId())
                         .setTagName(blogTag.getTagName())
                         .setTagCount(
                                 blogTagRelationService.count(new QueryWrapper<BlogTagRelation>()
-                                        .lambda().eq(BlogTagRelation::getTagId,blogTag.getTagId()))
-                        )).collect(Collectors.toList());
-        return blogTagCounts;
+                                        .lambda()
+                                        .eq(BlogTagRelation::getTagId,blogTag.getTagId()))
+                        ))
+                .collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -43,7 +43,7 @@ public class TagController {
     /**
      * @Description: 返回未删除状态下的所有标签
      * @Param: []
-     * @return: com.zhulin.blog.dto.Result<com.zhulin.blog.entity.BlogTag>
+     * @return: com.linn.blog.dto.Result<com.linn.blog.entity.BlogTag>
      * @date: 2019/8/26 10:13
      */
     @ResponseBody

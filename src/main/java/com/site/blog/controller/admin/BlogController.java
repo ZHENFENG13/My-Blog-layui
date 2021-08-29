@@ -106,10 +106,8 @@ public class BlogController {
         File destFile = new File(UploadConstants.FILE_UPLOAD_DIC + newFileName);
         Map<String, Object> result = new HashMap<>();
         try {
-            if (!fileDirectory.exists()) {
-                if (!fileDirectory.mkdirs()) {
-                    throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
-                }
+            if (!fileDirectory.exists() && !fileDirectory.mkdirs()) {
+                throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
             }
             file.transferTo(destFile);
             String fileUrl = UploadConstants.FILE_SQL_DIC + newFileName;
@@ -127,7 +125,7 @@ public class BlogController {
      *
      * @param blogTagIds
      * @param blogInfo
-     * @return com.zhulin.blog.dto.Result
+     * @return com.linn.blog.dto.Result
      * @date 2019/8/28 15:04
      */
     @ResponseBody

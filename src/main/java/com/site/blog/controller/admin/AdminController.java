@@ -94,7 +94,7 @@ public class AdminController {
     /**
      * @Description: 登录验证
      * @Param: [username, password, session]
-     * @return: com.zhulin.blog.util.MessageBean
+     * @return: com.linn.blog.util.MessageBean
      * @date: 2019/8/23 19:50
      */
     @ResponseBody
@@ -104,7 +104,7 @@ public class AdminController {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return ResultGenerator.getResultByHttp(HttpStatusEnum.BAD_REQUEST);
         }
-        QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<AdminUser>(
+        QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<>(
                 new AdminUser().setLoginUserName(username)
                         .setLoginPassword(MD5Utils.MD5Encode(password,"UTF-8"))
         );
@@ -124,7 +124,7 @@ public class AdminController {
     /**
      * @Description: 验证密码是否正确
      * @Param: [oldPwd, session]
-     * @return: com.zhulin.blog.dto.Result
+     * @return: com.linn.blog.dto.Result
      * @date: 2019/8/25 9:15
      */
     @ResponseBody
@@ -173,7 +173,7 @@ public class AdminController {
     /**
      * @Description: 修改用户信息,成功之后清空session并跳转登录页
      * @Param: [session, newPwd, nickName]
-     * @return: com.zhulin.blog.dto.Result
+     * @return: com.linn.blog.dto.Result
      * @date: 2019/8/25 11:06
      */
     @ResponseBody
@@ -207,7 +207,7 @@ public class AdminController {
     /**
      * @Description: 用户头像上传
      * @Param: [httpServletRequest, file]
-     * @return: com.zhulin.blog.util.Result
+     * @return: com.linn.blog.util.Result
      * @date: 2019/8/24 15:15
      */
     @PostMapping({"/upload/authorImg"})
@@ -220,10 +220,8 @@ public class AdminController {
         //创建文件
         File destFile = new File(UploadConstants.UPLOAD_AUTHOR_IMG + newFileName);
         try {
-            if (!fileDirectory.exists()) {
-                if (!fileDirectory.mkdirs()) {
-                    throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
-                }
+            if (!fileDirectory.exists() && !fileDirectory.mkdirs()) {
+                throw new IOException("文件夹创建失败,路径为：" + fileDirectory);
             }
             file.transferTo(destFile);
             String sysAuthorImg = UploadConstants.SQL_AUTHOR_IMG + newFileName;

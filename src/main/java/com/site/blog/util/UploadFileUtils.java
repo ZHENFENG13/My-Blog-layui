@@ -1,10 +1,9 @@
 package com.site.blog.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 
@@ -12,7 +11,7 @@ import java.util.Random;
  * @program: my-blog
  * @classname: UploadFileUtils
  * @description: 上传文件工具类
- * @author: 朱林
+ * @author: linn
  * @create: 2019-08-24 15:24
  **/
 public class UploadFileUtils {
@@ -25,6 +24,9 @@ public class UploadFileUtils {
      */
     public static String getSuffixName(MultipartFile file){
         String fileName = file.getOriginalFilename();
+        if (StringUtils.isBlank(fileName)){
+            throw new RuntimeException("获取图片后缀失败");
+        }
         return fileName.substring(fileName.lastIndexOf("."));
     }
     

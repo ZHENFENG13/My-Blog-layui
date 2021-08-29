@@ -7,7 +7,7 @@ import java.util.Date;
  * @program: my-blog
  * @classname: DateUtils
  * @description:
- * @author: 朱林
+ * @author: linn
  * @create: 2019-08-28 13:02
  **/
 public class DateUtils {

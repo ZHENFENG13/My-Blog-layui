@@ -21,7 +21,7 @@ public class AjaxResultPage<T> implements Serializable {
     private long count;
 
     //表格数据
-    private List<T> data;
+    private transient List<T> data;
 
     public int getCode() {
         return code;

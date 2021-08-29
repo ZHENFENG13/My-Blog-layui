@@ -68,7 +68,7 @@ public class AjaxPutPage<T> {
      * @return
      */
     public Page<T> putPageToPage() {
-        return new Page<T>(this.page, this.limit);
+        return new Page<>(this.page, this.limit);
     }
 
     @Override

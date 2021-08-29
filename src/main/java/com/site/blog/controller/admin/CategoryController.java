@@ -50,7 +50,7 @@ public class CategoryController {
     @ResponseBody
     @GetMapping("/v1/category/list")
     public Result<List<BlogCategory>> categoryList() {
-        QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<BlogCategory>();
+        QueryWrapper<BlogCategory> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(BlogCategory::getIsDeleted, DeleteStatusEnum.NO_DELETED.getStatus());
         List<BlogCategory> list = blogCategoryService.list(queryWrapper);
         if (CollectionUtils.isEmpty(list)) {

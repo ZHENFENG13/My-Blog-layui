@@ -8,19 +8,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface BlogMapper extends BaseMapper<BlogInfo>{
-    int deleteByPrimaryKey(Long blogId);
-
-    int insert(BlogInfo record);
-
-    int insertSelective(BlogInfo record);
-
-    BlogInfo selectByPrimaryKey(Long blogId);
-
-    int updateByPrimaryKeySelective(BlogInfo record);
-
-    int updateByPrimaryKeyWithBLOBs(BlogInfo record);
-
-    int updateByPrimaryKey(BlogInfo record);
 
     List<BlogInfo> findBlogList(PageQueryUtils pageUtil);
 

@@ -36,7 +36,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
      */
     @Override
     public boolean validatePassword(Integer userId, String oldPwd) {
-        QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<AdminUser>(
+        QueryWrapper<AdminUser> queryWrapper = new QueryWrapper<>(
                 new AdminUser().setAdminUserId(userId)
                         .setLoginPassword(MD5Utils.MD5Encode(oldPwd, "UTF-8"))
         );

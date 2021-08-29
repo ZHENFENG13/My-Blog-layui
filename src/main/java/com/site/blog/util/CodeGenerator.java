@@ -65,7 +65,7 @@ public class CodeGenerator {
         String projectPath = System.getProperty("user.dir");
         gc.setOutputDir(projectPath + outPutDir);
         gc.setDateType(DateType.ONLY_DATE);
-        gc.setAuthor("zhulin");
+        gc.setAuthor("linn");
         gc.setOpen(false);
         gc.setBaseResultMap(true);
         gc.setBaseColumnList(true);
